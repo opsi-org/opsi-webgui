@@ -10,7 +10,7 @@
   CoreAppTooltipTable - Tooltip with tabular data display.
 -->
 <template>
-  <UTooltip v-if="visibleRows.length > 0" :delay="{ open: 200 }" :ui="{ content: 'p-0 bg-transparent shadow-none border-0' }">
+  <CoreAppTooltip v-if="visibleRows.length > 0" :delay="{ open: 200 }" :ui="{ content: 'p-0 bg-transparent shadow-none border-0' }">
     <slot />
     <template #content>
       <div
@@ -47,7 +47,7 @@
         </table>
       </div>
     </template>
-  </UTooltip>
+  </CoreAppTooltip>
   <template v-else>
     <slot />
   </template>

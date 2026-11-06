@@ -12,8 +12,8 @@
 <template>
   <div class="flex flex-col h-full min-h-0 opsi-compact-page opsi-dense-form">
     <div class="shrink-0 sticky top-0 z-10 bg-(--color-surface) mb-1">
-      <div class="flex flex-wrap items-center justify-between gap-1.5">
-        <div class="flex items-center gap-1.5">
+      <div class="flex flex-wrap items-center gap-1.5" :class="isServerDefaultMode ? 'justify-end' : 'justify-between'">
+        <div v-if="!isServerDefaultMode" class="flex items-center gap-1.5">
           <CoreAppTabsNav v-model="activeTab" :tabs="tabDefs" />
         </div>
         <div class="flex flex-wrap items-center gap-1.5">
@@ -163,6 +163,7 @@
                 :icon="icons.x"
                 :title="$t('common.discard')"
                 @click="discardSingleAttribute(key)"
+                intent="destructive"
               />
             </div>
           </div>

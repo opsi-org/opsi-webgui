@@ -16,10 +16,11 @@
         <template v-if="selectable">
           <CoreAppButton
             v-if="selectedKeys.length > 0"
+            intent="dismiss"
             :icon="icons.xCircle"
             variant="soft"
             color="primary"
-            size="xs"
+            size="sm"
             :title="`${selectedKeys.length} ${$t('common.selected')} - ${$t('common.clearSelection')}`"
             @click="clearSelection"
           >
@@ -27,9 +28,10 @@
           </CoreAppButton>
           <CoreAppTooltip v-if="selectedKeys.length > 0" :text="String($t('settings.showOnlySelected'))">
             <CoreAppButton
-              size="xs"
+              size="sm"
               variant="ghost"
               :color="onlySelected ? 'primary' : 'neutral'"
+              :aria-pressed="onlySelected"
               :icon="onlySelected ? icons.eyeOff : icons.eye"
               :aria-label="String($t('settings.showOnlySelected'))"
               data-testid="show-only-selected"
@@ -54,9 +56,9 @@
               :icon="icons.filter"
               :aria-label="String($t('common.advancedFilters'))"
               variant="outline"
-              :color="advancedFiltersActiveCount > 0 || savedSearchEntries.length > 0 ? 'primary' : 'neutral'"
-              :class="advancedFiltersActiveCount > 0 ? 'border-2 border-(--color-text)' : ''"
+              color="primary"
               size="sm"
+              :square="advancedFiltersActiveCount === 0"
               data-testid="filters-and-saved-searches"
             >
               <template v-if="advancedFiltersActiveCount > 0">{{ advancedFiltersActiveCount }}</template>
@@ -79,14 +81,14 @@
                 />
                 <hr class="border-(--color-border)" />
                 <div class="flex justify-end gap-2">
-                  <CoreAppButton variant="soft" color="error" size="xs" :disabled="!canSaveSearch" @click="clearAllFilters">
+                  <CoreAppButton intent="dismiss" size="xs" :disabled="!canSaveSearch" @click="clearAllFilters">
                     {{ $t('globalSearch.clearAllFilters') }}
                   </CoreAppButton>
                   <CoreAppButton
+                    intent="confirm"
                     variant="soft"
-                    :color="favoriteFeedback ? 'warning' : 'primary'"
                     size="xs"
-                    :icon="icons.starSolid"
+                    :icon="favoriteFeedback ? icons.check : icons.starSolid"
                     :disabled="!canSaveSearch"
                     data-testid="favorite-advanced-filters"
                     @click="favorite"
@@ -131,6 +133,7 @@
                       class="flex-1"
                       :color="'primary'"
                       :variant="effectiveSelectionMode === 'multi' ? 'solid' : 'outline'"
+                      :aria-pressed="effectiveSelectionMode === 'multi'"
                       @click="forceSelectionMode('multi')"
                     >
                       {{ $t('settings.multiSelect') }}
@@ -140,6 +143,7 @@
                       class="flex-1"
                       :color="'primary'"
                       :variant="effectiveSelectionMode === 'single' ? 'solid' : 'outline'"
+                      :aria-pressed="effectiveSelectionMode === 'single'"
                       @click="forceSelectionMode('single')"
                     >
                       {{ $t('settings.singleSelect') }}
@@ -155,6 +159,7 @@
                     class="flex-1"
                     color="primary"
                     :variant="tableSettings.settings.filterMode === 'primary' ? 'solid' : 'outline'"
+                    :aria-pressed="tableSettings.settings.filterMode === 'primary'"
                     @click="tableSettings.settings.filterMode = 'primary'"
                   >
                     {{ primaryFilterLabel }}
@@ -165,6 +170,7 @@
                     class="flex-1"
                     color="primary"
                     :variant="tableSettings.settings.filterMode === 'all' ? 'solid' : 'outline'"
+                    :aria-pressed="tableSettings.settings.filterMode === 'all'"
                     @click="tableSettings.settings.filterMode = 'all'"
                   >
                     {{ $t('settings.allColumns') }}
@@ -251,7 +257,7 @@
                 </div>
               </div>
 
-              <CoreAppButton variant="outline" color="primary" size="xs" block @click="resetTableSettings">
+              <CoreAppButton intent="dismiss" size="xs" block @click="resetTableSettings">
                 {{ $t('common.resetDefaults') }}
               </CoreAppButton>
             </div>
@@ -260,6 +266,7 @@
 
         <CoreAppButton
           v-if="showRefresh"
+          intent="command"
           :icon="icons.refresh"
           variant="ghost"
           color="neutral"
@@ -398,7 +405,6 @@
                 :class="{
                   'bg-(--color-surface-hover)': activeRowId === `${tableId}-row-${getRowKey(row)}`,
                   'bg-(--color-primary-soft-bg)': isHighlighted(row),
-                  'shadow-[inset_3px_0_0_0_var(--color-primary)]': isActive(row),
                 }"
                 @click="handleRowClick(row, $event)"
                 @keydown.enter="handleRowClick(row, $event)"
@@ -463,10 +469,7 @@
                   }"
                   @click.stop
                 >
-                  <div
-                    class="flex items-center justify-center gap-0 rounded-md transition-colors"
-                    :class="isHighlighted(row) ? 'bg-primary/10 ring-1 ring-primary/30 px-0.5' : ''"
-                  >
+                  <div class="flex items-center justify-center gap-0">
                     <slot
                       name="row-actions"
                       :row="row"
@@ -987,7 +990,7 @@
   }
 
   function isHighlighted(row: T): boolean {
-    return isSelected(row) || isActive(row)
+    return isSelected(row)
   }
 
   function toggleSelection(row: T) {

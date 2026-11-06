@@ -32,60 +32,36 @@
       <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
         <CoreAppButton
           @click="filterByStatus('ok')"
-          variant="ghost"
-          color="neutral"
-          :class="[
-            'p-2.5! rounded-md border transition-all text-center cursor-pointer hover:shadow-sm h-auto! flex-col!',
-            statusFilter === 'ok'
-              ? 'ring-2 ring-offset-2 ring-offset-(--color-surface) ring-(--color-success) border-(--color-success)'
-              : 'border-(--color-border) hover:border-(--color-success)',
-            'bg-(--color-success-soft-bg)',
-          ]"
+          intent="toggle"
+          :active="activeTab === 'healthcheck' && statusFilter === 'ok'"
+          class="p-2.5! rounded-md text-center h-auto! flex-col!"
         >
           <div class="text-xl font-bold text-(--color-success-soft-text)">{{ stats.ok }}</div>
           <div class="text-[11px] text-(--color-text) mt-0.5">{{ $t('diag.passed') }}</div>
         </CoreAppButton>
         <CoreAppButton
           @click="filterByStatus('warning')"
-          variant="ghost"
-          color="neutral"
-          :class="[
-            'p-2.5! rounded-md border transition-all text-center cursor-pointer hover:shadow-sm h-auto! flex-col!',
-            statusFilter === 'warning'
-              ? 'ring-2 ring-offset-2 ring-offset-(--color-surface) ring-(--color-warning) border-(--color-warning)'
-              : 'border-(--color-border) hover:border-(--color-warning)',
-            'bg-(--color-warning-soft-bg)',
-          ]"
+          intent="toggle"
+          :active="activeTab === 'healthcheck' && statusFilter === 'warning'"
+          class="p-2.5! rounded-md text-center h-auto! flex-col!"
         >
           <div class="text-xl font-bold text-(--color-warning-soft-text)">{{ stats.warning }}</div>
           <div class="text-[11px] text-(--color-text) mt-0.5">{{ $t('common.warnings') }}</div>
         </CoreAppButton>
         <CoreAppButton
           @click="filterByStatus('error')"
-          variant="ghost"
-          color="neutral"
-          :class="[
-            'p-2.5! rounded-md border transition-all text-center cursor-pointer hover:shadow-sm h-auto! flex-col!',
-            statusFilter === 'error'
-              ? 'ring-2 ring-offset-2 ring-offset-(--color-surface) ring-(--color-error) border-(--color-error)'
-              : 'border-(--color-border) hover:border-(--color-error)',
-            'bg-(--color-error-soft-bg)',
-          ]"
+          intent="toggle"
+          :active="activeTab === 'healthcheck' && statusFilter === 'error'"
+          class="p-2.5! rounded-md text-center h-auto! flex-col!"
         >
           <div class="text-xl font-bold text-(--color-error-soft-text)">{{ stats.error }}</div>
           <div class="text-[11px] text-(--color-text) mt-0.5">{{ $t('common.errors') }}</div>
         </CoreAppButton>
         <CoreAppButton
           @click="showModulesOverview"
-          variant="ghost"
-          color="neutral"
-          :class="[
-            'p-2.5! rounded-md border transition-all text-center cursor-pointer hover:shadow-sm h-auto! flex-col!',
-            activeTab === 'modules' && !statusFilter
-              ? 'ring-2 ring-offset-2 ring-offset-(--color-surface) ring-(--color-primary) border-(--color-primary)'
-              : 'border-(--color-border) hover:border-(--color-primary)',
-            'bg-(--color-primary-soft-bg)',
-          ]"
+          intent="toggle"
+          :active="activeTab === 'modules' && !statusFilter"
+          class="p-2.5! rounded-md text-center h-auto! flex-col!"
         >
           <div class="text-xl font-bold text-(--color-primary-soft-text)">
             {{ modules.length }}
@@ -97,7 +73,7 @@
       <div v-if="statusFilter" class="flex items-center gap-2 mt-2">
         <span class="text-sm text-(--color-text-muted)">{{ $t('common.filterBy') }}:</span>
         <CoreAppStatusBadge :status="getStatusType(statusFilter)" :label="statusFilter" />
-        <CoreAppButton variant="ghost" color="neutral" size="xs" :icon="icons.x" @click="statusFilter = ''" />
+        <CoreAppButton intent="dismiss" size="xs" :icon="icons.x" :title="String($t('common.clear'))" @click="statusFilter = ''" />
       </div>
     </template>
 

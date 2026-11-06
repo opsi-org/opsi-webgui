@@ -20,9 +20,11 @@
       :health-check-tooltip="healthCheckTooltip"
       :health-worst-case="currentHealthWorstCase"
       :health-counts="currentHealthCounts"
+      :sidebar-open="sidebarOpen"
+      :quickpanel-open="quickpanelOpen"
       @toggle-sidebar="toggleSidebar"
       @toggle-quickpanel="toggleQuickpanel"
-      @show-shortcuts="showShortcutsHelp = true"
+      @show-shortcuts="openShortcutsHelp"
     />
 
     <div class="flex-1 flex overflow-hidden relative">
@@ -50,7 +52,7 @@
               : 'w-12',
         ]"
       >
-        <LayoutsSidebar :collapsed="!sidebarOpen && !isMobile" :is-mobile="isMobile" />
+        <LayoutsSidebar :collapsed="!sidebarOpen && !isMobile" :is-mobile="isMobile" @open-settings="openSettings" />
       </aside>
 
       <main class="flex-1 flex flex-col overflow-hidden bg-(--color-surface)">
@@ -152,6 +154,7 @@
     </div>
 
     <CoreAppShortcutsHelpModal v-model="showShortcutsHelp" />
+    <SettingsPreferencesModal v-model:open="showSettings" :return-focus="settingsTrigger" @default-page-changed="defaultPage = $event" />
 
     <Transition name="slide-up">
       <div v-if="quickpanelOpen && useOverlayQuickpanel" class="fixed inset-0 z-50">
@@ -164,7 +167,7 @@
           @keydown.enter="setQuickpanelOpen(false)"
           @keydown.space.prevent="setQuickpanelOpen(false)"
         />
-        <div class="absolute inset-0 bg-(--color-background) overflow-hidden">
+        <div class="absolute inset-0 bg-(--color-background) overflow-hidden" data-testid="quickpanel">
           <div class="p-2.5 h-full min-h-0 flex flex-col overflow-hidden">
             <div class="flex justify-center mb-3">
               <div class="w-10 h-1 bg-(--color-border) rounded-full" />
@@ -211,6 +214,14 @@
   const { t: i18nT } = useI18n()
 
   const defaultPage = ref('/clients')
+  const showSettings = ref(false)
+  const settingsTrigger = shallowRef<HTMLElement>()
+
+  function openSettings(event?: MouseEvent) {
+    const trigger = event?.currentTarget ?? document.activeElement
+    settingsTrigger.value = trigger instanceof HTMLElement ? trigger : undefined
+    showSettings.value = true
+  }
 
   const healthCheckTooltip = computed(() => {
     const counts = diagnosticsFetched.value ? cachedHealthCounts.value : userStore.healthCounts
@@ -252,6 +263,11 @@
   const sidebarOpen = ref(false)
   const quickpanelOpen = ref(false)
   const showShortcutsHelp = ref(false)
+
+  function openShortcutsHelp() {
+    if (document.querySelector('[role="dialog"][data-state="open"], [role="alertdialog"][data-state="open"]')) return
+    showShortcutsHelp.value = true
+  }
 
   const MIN_QUICKPANEL_WIDTH = 220
   const quickpanelWidth = computed({
@@ -353,6 +369,14 @@
   const shortcutActions = useActiveShortcutActions()
 
   defineShortcuts({
+    'ctrl_,': {
+      usingInput: true,
+      handler: (e) => {
+        e?.preventDefault()
+        if (showSettings.value || (e?.target instanceof HTMLElement && e.target.closest('[role="dialog"]'))) return
+        openSettings()
+      },
+    },
     ctrl_s: {
       usingInput: true,
       handler: (e) => {
@@ -387,7 +411,7 @@
     },
     'ctrl_shift_?': {
       usingInput: true,
-      handler: () => (showShortcutsHelp.value = true),
+      handler: openShortcutsHelp,
     },
   })
 </script>

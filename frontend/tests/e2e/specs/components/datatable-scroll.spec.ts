@@ -9,12 +9,11 @@
  */
 
 import { test, expect } from '../../fixtures'
-import { waitForTable, getTableRowCount } from '../../utils/ui'
 
 const tableContainer = (pageOrSel: import('@playwright/test').Page) =>
   pageOrSel
     .locator('div[role="region"]')
-    .filter({ has: pageOrSel.locator('table') })
+    .filter({ has: pageOrSel.locator('tr[id^="clients-row-"]') })
     .first()
 
 async function metrics(page: import('@playwright/test').Page) {
@@ -31,8 +30,8 @@ async function metrics(page: import('@playwright/test').Page) {
 test.describe('DataTable scroll', () => {
   test('vertical scroll: content overflows and the container scrolls', async ({ page }) => {
     await page.setViewportSize({ width: 1280, height: 800 })
-    await page.goto('/clients', { waitUntil: 'networkidle', timeout: 30000 })
-    await waitForTable(page)
+    await page.goto('/clients', { waitUntil: 'domcontentloaded', timeout: 30000 })
+    await expect(page.locator('tr[id^="clients-row-"]').first()).toBeVisible({ timeout: 30000 })
 
     const m = await metrics(page)
     expect(m.overflowY).toMatch(/auto|scroll/)
@@ -42,8 +41,8 @@ test.describe('DataTable scroll', () => {
 
   test('horizontal scroll: wide table scrolls sideways on a narrow window', async ({ page }) => {
     await page.setViewportSize({ width: 820, height: 800 })
-    await page.goto('/clients', { waitUntil: 'networkidle', timeout: 30000 })
-    await waitForTable(page)
+    await page.goto('/clients', { waitUntil: 'domcontentloaded', timeout: 30000 })
+    await expect(page.locator('tr[id^="clients-row-"]').first()).toBeVisible({ timeout: 30000 })
 
     const m = await metrics(page)
     expect(m.overflowX).toMatch(/auto|scroll/)
@@ -54,9 +53,11 @@ test.describe('DataTable scroll', () => {
   test('4K regression: large viewport eagerly fills beyond the first page', async ({ page }) => {
     // A 4K-class viewport: 20 rows can never fill it
     await page.setViewportSize({ width: 2560, height: 1440 })
-    await page.goto('/clients', { waitUntil: 'networkidle', timeout: 30000 })
-    await waitForTable(page)
+    await page.goto('/clients', { waitUntil: 'domcontentloaded', timeout: 30000 })
+    await expect(page.locator('tr[id^="clients-row-"]').first()).toBeVisible({ timeout: 30000 })
 
-    await expect.poll(async () => getTableRowCount(page), { timeout: 15000, intervals: [500, 1000, 1500] }).toBeGreaterThan(20)
+    await expect
+      .poll(() => page.locator('tr[id^="clients-row-"]').count(), { timeout: 15000, intervals: [500, 1000, 1500] })
+      .toBeGreaterThan(20)
   })
 })

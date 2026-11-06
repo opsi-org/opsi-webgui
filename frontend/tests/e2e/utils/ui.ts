@@ -16,7 +16,26 @@ import type { Page } from '@playwright/test'
 import { expect } from '@playwright/test'
 
 export type Theme = 'light' | 'dark'
-export type Locale = 'en' | 'de'
+export type Locale = 'en' | 'de' | 'fr'
+
+/** Open settings and return a cleanup that restores only overlays opened here. */
+export async function openSettings(page: Page): Promise<() => Promise<void>> {
+  const dialog = page.getByTestId('settings-dialog')
+  if (await dialog.isVisible()) return async () => {}
+
+  const sidebarToggle = page.locator('header button[aria-expanded]').first()
+  await expect(sidebarToggle).toBeVisible()
+  const openSidebar = (page.viewportSize()?.width ?? 0) < 768 && (await sidebarToggle.getAttribute('aria-expanded')) !== 'true'
+  if (openSidebar) await sidebarToggle.click()
+  await page.getByTestId('settings-toggle').click()
+  await expect(dialog).toBeVisible()
+
+  return async () => {
+    await page.getByTestId('settings-close').click()
+    await expect(dialog).toBeHidden()
+    if (openSidebar) await sidebarToggle.click()
+  }
+}
 
 /** Open the quick panel when its toggle is available; leave it unchanged if already open. */
 export async function ensureQuickPanelOpen(page: Page): Promise<void> {
@@ -36,8 +55,7 @@ export async function seedClientSelection(
   options: { count?: number; source?: 'table' | 'quickpanel' } = {},
 ): Promise<string[]> {
   const { count = 1, source = 'table' } = options
-  await page.goto('/clients', { waitUntil: 'networkidle', timeout: 30000 })
-  await waitForTable(page)
+  await page.goto('/clients', { waitUntil: 'domcontentloaded', timeout: 30000 })
 
   const clientHeader = page.getByRole('columnheader', { name: /^(Client ID|Client-ID)$/ })
   await expect(clientHeader).toBeVisible({ timeout: 30000 })
@@ -63,26 +81,22 @@ export async function seedClientSelection(
 }
 
 /**
- * Switch the app theme via the theme toggle button.
+ * Switch the theme via the login footer or the authenticated settings dialog.
  */
 export async function setTheme(page: Page, target: Theme): Promise<void> {
-  const toggle = page.getByTestId('theme-toggle')
-  if (!(await toggle.isVisible().catch(() => false))) return
-
-  const current = await toggle.getAttribute('data-theme')
-  if (current === target) return
-
-  // Close potentially open overlays/dialogs that can intercept pointer events
-  await page.keyboard.press('Escape').catch(() => undefined)
-  await page.waitForTimeout(100)
-
-  try {
-    await toggle.click({ timeout: 5000 })
-  } catch {
-    // Last resort: force click when an overlay transition still intercepts events
-    await toggle.click({ force: true, timeout: 5000 })
+  const authToggle = page.getByTestId('theme-toggle')
+  if (/\/login(?:[/?#]|$)/.test(page.url())) {
+    await expect(authToggle).toBeVisible()
+    if ((await authToggle.getAttribute('data-theme')) !== target) await authToggle.click()
+    await expect(page.locator('html')).toHaveClass(new RegExp(`\\b${target}\\b`))
+    return
   }
-  await page.waitForTimeout(300)
+  const closeSettings = await openSettings(page)
+  const select = page.getByTestId('theme-select')
+  await select.click()
+  await page.getByRole('option', { name: target === 'dark' ? /^(Dark|Dunkel|Sombre)$/ : /^(Light|Hell|Clair)$/ }).click()
+  await expect(page.locator('html')).toHaveClass(new RegExp(`\\b${target}\\b`))
+  await closeSettings()
 }
 
 export async function applyLocaleCookie(page: Page, target: Locale): Promise<void> {
@@ -91,44 +105,32 @@ export async function applyLocaleCookie(page: Page, target: Locale): Promise<voi
 }
 
 export async function setLocale(page: Page, target: Locale): Promise<void> {
-  const dropdown = page.getByTestId('language-dropdown')
-  try {
-    await dropdown.waitFor({ state: 'visible', timeout: 10000 })
-  } catch {
+  const languages = { en: 'English', de: 'Deutsch', fr: 'Français' }
+  const authDropdown = page.getByTestId('language-dropdown')
+  if (/\/login(?:[/?#]|$)/.test(page.url())) {
+    await expect(authDropdown).toBeVisible()
+    if (!(await authDropdown.textContent())?.includes(target.toUpperCase())) {
+      await authDropdown.click()
+      await page.getByTestId(`language-dropdown-item-${target}`).click()
+    }
+    await expect(authDropdown).toContainText(target.toUpperCase())
     return
   }
-
-  const labelMatches = async () => (await dropdown.textContent())?.trim().toLowerCase() === target
-  if (await labelMatches()) return
-
-  await dropdown.click()
-  await page.waitForTimeout(200)
-  const option = page.getByTestId(`language-dropdown-item-${target}`)
-  await option.waitFor({ state: 'visible', timeout: 5000 })
-  await option.click()
-
-  await expect(dropdown).toContainText(new RegExp(target, 'i'), { timeout: 5000 })
-  await page.waitForTimeout(300)
+  const closeSettings = await openSettings(page)
+  const select = page.getByTestId('language-select')
+  await select.click()
+  await page.getByRole('option', { name: languages[target], exact: true }).click()
+  await expect(select).toContainText(languages[target])
+  await closeSettings()
 }
 
 export async function waitForLoaded(page: Page, timeout = 10000): Promise<void> {
-  const spinners = page.locator('.animate-spin')
-  try {
-    await expect(spinners).toHaveCount(0, { timeout })
-  } catch {
-    // wait for spinner to disappear, but don't fail if its still there (e.g. reachability check on clients page)
-  }
+  if (/\/login(?:\?|$|\/)/.test(page.url())) return
 
-  // Best-effort app shell readiness check (skip login route)
-  if (!/\/login(?:\?|$|\/)/.test(page.url())) {
-    await page
-      .locator('main, #main-content, [data-testid="main-content"]')
-      .first()
-      .waitFor({ state: 'visible', timeout })
-      .catch(() => undefined)
-  }
-
-  await page.waitForTimeout(200)
+  const content = page.locator('main, #main-content, [data-testid="main-content"]').first()
+  const errorPage = page.getByRole('heading', { name: /^Internal Server Error$/i })
+  await expect(content.or(errorPage).first(), 'The application must render its content or report a loading error').toBeVisible({ timeout })
+  await expect(errorPage, 'The application rendered an error page instead of its content').toHaveCount(0)
 }
 
 /**
@@ -151,7 +153,7 @@ export async function disableAnimations(page: Page): Promise<void> {
  * Wait for a data table to render at least one row.
  */
 export async function waitForTable(page: Page, timeout = 30000): Promise<void> {
-  const row = page.locator('table tbody tr, [class*="table"] [class*="row"]:not([class*="header"]), [role="rowgroup"] [role="row"]').first()
+  const row = page.locator('main table tbody tr[id]').first()
 
   try {
     await row.waitFor({ state: 'visible', timeout })
@@ -211,5 +213,5 @@ export async function waitForTable(page: Page, timeout = 30000): Promise<void> {
  * Get the row count from a data table.
  */
 export async function getTableRowCount(page: Page): Promise<number> {
-  return page.locator('table tbody tr, [class*="table"] [class*="row"]:not([class*="header"]), [role="rowgroup"] [role="row"]').count()
+  return page.locator('main table tbody tr[id]').count()
 }

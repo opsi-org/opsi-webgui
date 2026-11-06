@@ -21,7 +21,7 @@
     <div class="shrink-0 pb-2 sticky top-0 z-10 bg-(--color-surface) mb-2 flex flex-wrap items-center justify-end gap-1.5">
       <CoreAppButton
         v-if="sourceId"
-        color="success"
+        color="primary"
         :loading="loading"
         :title="String($t('clients.clone.title'))"
         size="sm"

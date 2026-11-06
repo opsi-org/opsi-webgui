@@ -63,6 +63,7 @@
     "optional": "Optional settings",
     "password": "Backup Password",
     "restore": "Restore Backup",
+    "restoreConfirm": "Restoring this backup will overwrite existing server data. Continue?",
     "restored": "Backup restored successfully.",
     "restoreOptions": "Restore Options",
     "serverIdHandling": "Server ID Handling",
@@ -546,7 +547,6 @@
     "title": "Products",
     "unlock": "Unlock",
     "unlockAll": "Unlock All",
-    "viewCatalogHint": "View products - shows the depot catalog if no clients are selected.",
     "unlocked": "Product {product} has been unlocked."
   },
   "quick": {
@@ -583,6 +583,8 @@
     "title": "Servers"
   },
   "settings": {
+    "appearance": "Appearance",
+    "language": "Language",
     "panelView": "Default client panel",
     "rowActions": "Client row actions",
     "showAllRowActions": "Show all panel actions in table",

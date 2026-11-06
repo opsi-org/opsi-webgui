@@ -24,6 +24,7 @@
       />
       <CoreAppButton
         :icon="icons.refresh"
+        intent="command"
         variant="ghost"
         color="neutral"
         size="sm"

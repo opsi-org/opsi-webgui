@@ -11,6 +11,21 @@
 -->
 <template>
   <div class="flex items-center gap-1">
+    <CoreAppTooltip v-if="showAllActions || defaultAction === 'products'" :text="String($t('products.title'))" :delay="{ open: 0 }">
+      <CoreAppButton
+        :icon="icons.product"
+        variant="ghost"
+        size="xs"
+        class="h-7 w-7 p-1"
+        :color="activeAction === 'products' ? 'primary' : 'neutral'"
+        :class="activeAction === 'products' ? 'bg-(--color-primary-soft-bg)! text-(--color-primary-soft-text)!' : ''"
+        :aria-label="String($t('products.title'))"
+        data-testid="client-row-action-products"
+        @click="emit('open-products')"
+        :disabled="isReadOnly"
+      />
+    </CoreAppTooltip>
+
     <CoreAppTooltip v-if="showAllActions || defaultAction === 'config'" :text="String($t('config.title'))" :delay="{ open: 0 }">
       <CoreAppButton
         :icon="icons.config"
@@ -20,6 +35,7 @@
         :color="activeAction === 'config' ? 'primary' : 'neutral'"
         :class="activeAction === 'config' ? 'bg-(--color-primary-soft-bg)! text-(--color-primary-soft-text)!' : ''"
         :aria-label="String($t('config.title'))"
+        :aria-expanded="activeAction === 'config'"
         data-testid="client-row-action-config"
         @click="emit('open-config')"
       />
@@ -34,6 +50,7 @@
         :color="activeAction === 'logs' ? 'primary' : 'neutral'"
         :class="activeAction === 'logs' ? 'bg-(--color-primary-soft-bg)! text-(--color-primary-soft-text)!' : ''"
         :aria-label="String($t('logs.title'))"
+        :aria-expanded="activeAction === 'logs'"
         data-testid="client-row-action-logs"
         @click="emit('open-logs')"
       />
@@ -48,6 +65,7 @@
         :color="activeAction === 'inventory' ? 'primary' : 'neutral'"
         :class="activeAction === 'inventory' ? 'bg-(--color-primary-soft-bg)! text-(--color-primary-soft-text)!' : ''"
         :aria-label="String($t('inventory.title'))"
+        :aria-expanded="activeAction === 'inventory'"
         data-testid="client-row-action-inventory"
         @click="emit('open-inventory')"
       />
@@ -62,6 +80,7 @@
         :color="activeAction === 'clone' ? 'primary' : 'neutral'"
         :class="activeAction === 'clone' ? 'bg-(--color-primary-soft-bg)! text-(--color-primary-soft-text)!' : ''"
         :aria-label="String($t('clients.clone.title'))"
+        :aria-expanded="activeAction === 'clone'"
         @click="emit('open-clone')"
         :disabled="isReadOnly || !canCreateClients"
         data-testid="client-row-action-clone"
@@ -75,16 +94,17 @@
 <script setup lang="ts">
   const props = defineProps<{
     clientId: string
-    defaultAction?: 'config' | 'logs' | 'inventory' | 'clone'
+    defaultAction?: 'config' | 'logs' | 'inventory' | 'clone' | 'products'
     showAllActions?: boolean
     /** Which panel is currently open for this row (highlights the matching button). */
-    activeAction?: 'config' | 'logs' | 'inventory' | 'clone' | null
+    activeAction?: 'config' | 'logs' | 'inventory' | 'clone' | 'products' | null
   }>()
 
   const defaultAction = computed(() => props.defaultAction || 'config')
   const showAllActions = computed(() => props.showAllActions ?? false)
 
   const emit = defineEmits<{
+    (e: 'open-products'): void
     (e: 'open-config'): void
     (e: 'open-logs'): void
     (e: 'open-inventory'): void

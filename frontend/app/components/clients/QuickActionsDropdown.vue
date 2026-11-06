@@ -45,6 +45,7 @@
     <template v-else>
       <CoreAppSelectMenu
         v-if="clientIds.length > 0"
+        command
         open-on-hover
         borderless
         no-caret
@@ -52,7 +53,7 @@
         :items="actionItems"
         :model-value="null"
         :class="compact ? '' : 'w-full'"
-        :aria-label="String($t('clients.actions'))"
+        :aria-label="`${clientIds.length} ${$t('clients.actions')}`"
         :ui="{ content: 'max-h-96 overflow-y-auto' }"
         data-testid="client-quick-actions-trigger"
         @update:model-value="handleActionSelect"
@@ -73,6 +74,7 @@
       </CoreAppSelectMenu>
       <CoreAppTooltip v-else :text="String($t('clients.selectFirst'))">
         <CoreAppButton
+          intent="command"
           variant="soft"
           color="primary"
           size="sm"
@@ -110,7 +112,7 @@
             >
           </h3>
           <CoreAppButton
-            :icon="icons.x"
+            :icon="closeIcon"
             variant="ghost"
             color="neutral"
             :aria-label="String($t('common.close'))"
@@ -172,6 +174,7 @@
               v-for="os in osTypes"
               :key="os.value"
               :variant="deployOptions.type === os.value ? 'solid' : 'outline'"
+              :aria-pressed="deployOptions.type === os.value"
               :color="deployOptions.type === os.value ? 'primary' : 'neutral'"
               size="sm"
               class="justify-center"
@@ -245,7 +248,7 @@
         </div>
 
         <div class="flex justify-end gap-2 pt-3 border-(--color-border)">
-          <CoreAppButton variant="outline" color="primary" @click="confirmOpen = false">{{ $t('common.cancel') }} </CoreAppButton>
+          <CoreAppButton intent="dismiss" @click="confirmOpen = false">{{ $t('common.cancel') }} </CoreAppButton>
           <CoreAppButton
             :color="currentAction === 'delete' ? 'error' : 'primary'"
             :loading="loading"
@@ -268,7 +271,7 @@
             {{ $t('common.results') }} - {{ actionLabel(currentAction) }}
           </h3>
           <CoreAppButton
-            :icon="icons.x"
+            :icon="closeIcon"
             variant="ghost"
             color="neutral"
             :aria-label="String($t('common.close'))"
@@ -303,6 +306,7 @@
   }>()
 
   const icons = useIcons()
+  const closeIcon: string = icons.x
   const { t: $t } = useI18n()
   const {
     triggerOnDemand,
@@ -491,7 +495,16 @@
   }
 
   async function executeAction() {
-    if (!currentAction.value || !props.clientIds.length) return
+    if (
+      !confirmOpen.value ||
+      !currentAction.value ||
+      !props.clientIds.length ||
+      isReadOnly.value ||
+      loading.value ||
+      !canExecute.value ||
+      (currentAction.value === 'delete' && !canCreateClients.value)
+    )
+      return
 
     loading.value = true
     actionResults.value = {}
@@ -603,4 +616,30 @@
       loading.value = false
     }
   }
+
+  defineShortcuts(
+    computed(() => {
+      if (!confirmOpen.value && !resultOpen.value) return {}
+
+      return {
+        ctrl_escape: {
+          usingInput: true,
+          handler: (e: KeyboardEvent) => {
+            e.preventDefault()
+            if (resultOpen.value) resultOpen.value = false
+            else confirmOpen.value = false
+          },
+        },
+        ctrl_enter: confirmOpen.value
+          ? {
+              usingInput: true,
+              handler: (e: KeyboardEvent) => {
+                e.preventDefault()
+                void executeAction()
+              },
+            }
+          : undefined,
+      }
+    }),
+  )
 </script>

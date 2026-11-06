@@ -63,6 +63,7 @@
     "optional": "Paramètres optionnels",
     "password": "Mot de passe de sauvegarde",
     "restore": "Restaurer la sauvegarde",
+    "restoreConfirm": "La restauration de cette sauvegarde écrasera les données existantes du serveur. Continuer ?",
     "restored": "Sauvegarde restaurée avec succès.",
     "restoreOptions": "Options de restauration",
     "serverIdHandling": "Gestion de l'ID serveur",
@@ -546,7 +547,6 @@
     "title": "Produits",
     "unlock": "Déverrouiller",
     "unlockAll": "Tout déverrouiller",
-    "viewCatalogHint": "Afficher les produits – montre le catalogue du dépôt si aucun client n'est sélectionné.",
     "unlocked": "Le produit {product} a été déverrouillé."
   },
   "quick": {
@@ -583,6 +583,8 @@
     "title": "Serveurs"
   },
   "settings": {
+    "appearance": "Apparence",
+    "language": "Langue",
     "panelView": "Panneau client par défaut",
     "rowActions": "Actions de ligne client",
     "showAllRowActions": "Afficher toutes les actions du panneau dans le tableau",

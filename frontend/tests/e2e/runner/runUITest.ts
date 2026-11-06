@@ -172,11 +172,6 @@ async function navigateTo(page: Page, config: UITestConfig, locale: Locale, them
   await applyLocaleCookie(page, locale)
   await page.goto(config.route, { waitUntil: 'load', timeout: 30000 })
   if (config.waitAfterNav) await page.waitForTimeout(config.waitAfterNav)
-  if (!config.route.includes('/login')) {
-    await setTheme(page, theme)
-    await setLocale(page, locale)
-    await page.waitForTimeout(300)
-  }
   await disableAnimations(page)
   await waitForLoaded(page)
 
@@ -238,6 +233,8 @@ async function navigateTo(page: Page, config: UITestConfig, locale: Locale, them
       await tryLoginRecovery()
     }
   }
+  await setTheme(page, theme)
+  await setLocale(page, locale)
 }
 
 // Helper: switch theme in-place (no re-navigation).

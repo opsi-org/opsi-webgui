@@ -62,10 +62,7 @@
             <div
               class="min-w-0 w-full md:w-2/5 flex items-center gap-1 group/paramrow px-1.5 py-0.5 rounded bg-(--color-surface-hover) md:bg-transparent md:px-0 md:py-0"
             >
-              <span
-                class="text-xs font-medium md:font-normal text-(--color-text) truncate select-text min-w-0"
-                :title="param.configId"
-              >
+              <span class="text-xs font-medium md:font-normal text-(--color-text) truncate select-text min-w-0" :title="param.configId">
                 {{ param.configId }}
               </span>
               <span
@@ -92,10 +89,7 @@
                   />
                 </CoreAppTooltip>
               </span>
-              <span
-                v-if="changedParams.has(param.configId)"
-                class="inline-flex items-center text-xs text-(--color-changed-text) ml-0.5"
-              >
+              <span v-if="changedParams.has(param.configId)" class="inline-flex items-center text-xs text-(--color-changed-text) ml-0.5">
                 <CoreAppIcon :name="icons.pencilSquare" class="w-3 h-3" />
               </span>
             </div>
@@ -119,7 +113,8 @@
                 color="neutral"
                 :icon="icons.x"
                 :title="$t('common.discard')"
-                @click="() => discardSingleParam(param.configId)"
+                @click="() => node.param && discardSingleParam(node.param.configId)"
+                intent="destructive"
               />
             </div>
           </div>

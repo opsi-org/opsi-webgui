@@ -33,7 +33,7 @@
           <div v-else />
           <div class="flex gap-2 shrink-0">
             <CoreAppButton
-              color="success"
+              color="primary"
               :loading="loading"
               size="sm"
               :disabled="!canCreate"
@@ -51,6 +51,7 @@
               :disabled="loading"
               :title="String($t('common.reset'))"
               @click="resetForm"
+              intent="dismiss"
             />
           </div>
         </div>
@@ -186,7 +187,7 @@
                   v-model="form.depotId"
                   :items="depotOptions"
                   :loading="loadingDepots"
-                  :aria-label="String($t('depot.title'))"
+                  :aria-label="`${$t('depot.title')}: ${depotOptions.find((option) => option.value === form.depotId)?.label ?? form.depotId}`"
                   :disabled="loading"
                   size="sm"
                   class="w-full"
@@ -274,13 +275,22 @@
               </span>
               <div class="flex-1 flex items-center gap-2 min-w-0">
                 <CoreAppSelectMenu
-                  v-model="form.netbootProducts"
+                  v-model="form.netbootProduct"
                   :items="netbootProductOptions"
-                  multiple
                   :aria-label="String($t('products.netboot'))"
                   :disabled="loading"
                   size="sm"
                   class="w-full"
+                />
+                <CoreAppButton
+                  v-if="form.netbootProduct"
+                  :icon="icons.x"
+                  :aria-label="String($t('common.clear'))"
+                  :disabled="loading"
+                  variant="ghost"
+                  color="neutral"
+                  size="sm"
+                  @click="form.netbootProduct = ''"
                 />
               </div>
             </div>
@@ -313,6 +323,7 @@
                       v-for="os in osTypes"
                       :key="os.value"
                       :variant="form.agentType === os.value ? 'solid' : 'outline'"
+                      :aria-pressed="form.agentType === os.value"
                       :color="form.agentType === os.value ? 'primary' : 'neutral'"
                       size="sm"
                       class="justify-center"
@@ -427,7 +438,7 @@
     agentType: 'windows' as 'windows' | 'linux' | 'mac',
     agentUsername: '',
     agentPassword: '',
-    netbootProducts: [] as Array<{ label: string; value: string }>,
+    netbootProduct: '',
     groups: [] as Array<{ label: string; value: string }>,
   })
 
@@ -452,7 +463,7 @@
       form.agentType !== 'windows' ||
       !!form.agentUsername ||
       !!form.agentPassword ||
-      form.netbootProducts.length > 0 ||
+      !!form.netbootProduct ||
       form.groups.length > 0,
   )
 
@@ -553,7 +564,7 @@
     form.agentType = 'windows'
     form.agentUsername = ''
     form.agentPassword = ''
-    form.netbootProducts = []
+    form.netbootProduct = ''
     form.groups = []
     formErrors.clientId = ''
     formErrors.depotId = ''
@@ -719,11 +730,10 @@
         })
       }
 
-      if (form.netbootProducts.length > 0) {
-        const productIds = form.netbootProducts.map((p) => p.value)
+      if (form.netbootProduct) {
         await setClientProductActions({
           clientIds: [hostId],
-          productIds,
+          productIds: [form.netbootProduct],
           actionRequest: 'setup',
         })
       }
