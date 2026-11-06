@@ -1,12 +1,19 @@
 {
   "actions": {
+    "requestChangeSummary": "Demande d'action modifiée pour {changed} produit(s). {unsupported} ignoré(s), car l'action n'est pas prise en charge.",
     "live": {
       "processing": "Traitement",
       "saving": "Enregistrement",
       "updated": "Mis à jour"
     },
-    "bulkSummary": "{totalProducts} action(s) produit sur {totalClients} client(s) - {succeeded} réussie(s), {failed} échouée(s)",
+    "bulkSummary": "{totalProducts} produit(s) avec des actions en attente sur {totalClients} client(s) - {succeeded} déclenchée(s), {failed} échouée(s), {skipped} ignorée(s)",
+    "noActionRequests": "Aucune demande d'action à exécuter pour les produits sélectionnés.",
+    "skipped": "Ignoré",
+    "missingProcessResult": "Aucune réponse de traitement des actions reçue du client.",
+    "processResults": "Résultats du traitement des actions",
+    "processTriggered": "Demandes de traitement des actions déclenchées.",
     "processingSummary": "Traitement de {totalProducts} action(s) produit sur {totalClients} client(s)...",
+    "applyingSupportedAction": "(S'applique uniquement aux produits qui prennent en charge l'action demandée.)",
     "failed": "Actions échouées",
     "failedClients": "Clients en échec",
     "failedClientsHelp": "Affiche les clients activés pour lesquels au moins un ProductOnClient a actionResult = failed.",

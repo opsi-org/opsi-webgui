@@ -1,12 +1,19 @@
 {
   "actions": {
+    "requestChangeSummary": "Action request changed for {changed} product(s). {unsupported} skipped because the action is unsupported.",
     "live": {
       "processing": "Processing",
       "saving": "Saving",
       "updated": "Updated"
     },
-    "bulkSummary": "{totalProducts} product action(s) on {totalClients} client(s) - {succeeded} succeeded, {failed} failed",
+    "bulkSummary": "{totalProducts} product(s) with pending actions on {totalClients} client(s) - {succeeded} triggered, {failed} failed, {skipped} skipped",
+    "noActionRequests": "No action requests to execute for the selected products.",
+    "skipped": "Skipped",
+    "missingProcessResult": "No process action response received from client.",
+    "processResults": "Process action results",
+    "processTriggered": "Process action requests triggered.",
     "processingSummary": "Processing {totalProducts} product action(s) on {totalClients} client(s)...",
+    "applyingSupportedAction": "(Only applying for products that support the requested action.)",
     "failed": "Failed Actions",
     "failedClients": "Failed Clients",
     "failedClientsHelp": "Shows enabled clients where at least one ProductOnClient has actionResult = failed.",

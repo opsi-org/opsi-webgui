@@ -39,8 +39,8 @@
           <tr v-for="detail in filteredDetails" :key="detail.clientId" class="align-top hover:bg-(--color-surface-hover)">
             <td class="whitespace-nowrap px-2 py-1.5 font-medium">{{ detail.clientId }}</td>
             <td class="whitespace-nowrap px-2 py-1.5">
-              <CoreAppBadge :color="detail.success ? 'success' : 'error'" size="xs" variant="subtle">
-                {{ detail.success ? $t('common.success') : $t('common.failed') }}
+              <CoreAppBadge :color="detail.skipped ? 'neutral' : detail.success ? 'success' : 'error'" size="xs" variant="subtle">
+                {{ detail.skipped ? $t('actions.skipped') : detail.success ? $t('common.success') : $t('common.failed') }}
               </CoreAppBadge>
             </td>
             <td class="px-2 py-1.5 wrap-break-word text-(--color-text)">{{ detail.message || '-' }}</td>
@@ -58,20 +58,28 @@
   import type { BulkActionDetail } from '~/types'
 
   const props = defineProps<{ details: BulkActionDetail[] }>()
-  const filter = defineModel<'all' | 'failed' | 'succeeded'>('filter', { default: 'failed' })
+  const filter = defineModel<'all' | 'failed' | 'succeeded' | 'info'>('filter', { default: 'failed' })
   const { t: $t } = useI18n()
   const searchQuery = ref('')
 
   const filterOptions = computed(() => [
     { value: 'all' as const, label: String($t('common.all')), count: props.details.length },
-    { value: 'failed' as const, label: String($t('common.failed')), count: props.details.filter((d) => !d.success).length },
+    { value: 'failed' as const, label: String($t('common.failed')), count: props.details.filter((d) => !d.success && !d.skipped).length },
     { value: 'succeeded' as const, label: String($t('common.success')), count: props.details.filter((d) => d.success).length },
+    { value: 'info' as const, label: String($t('common.info')), count: props.details.filter((d) => d.skipped).length },
   ])
 
   const filteredDetails = computed(() => {
     const query = searchQuery.value.trim().toLowerCase()
     return props.details.filter((detail) => {
-      const matchesFilter = filter.value === 'failed' ? !detail.success : filter.value === 'succeeded' ? detail.success : true
+      const matchesFilter =
+        filter.value === 'failed'
+          ? !detail.success && !detail.skipped
+          : filter.value === 'succeeded'
+            ? detail.success
+            : filter.value === 'info'
+              ? detail.skipped
+              : true
       const matchesSearch = !query || detail.clientId.toLowerCase().includes(query) || detail.message?.toLowerCase().includes(query)
       return matchesFilter && matchesSearch
     })

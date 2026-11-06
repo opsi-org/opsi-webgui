@@ -109,7 +109,6 @@
                         class="w-full"
                         :aria-label="`${$t('products.status')}: ${installationStatusOptions.find((option) => option.value === filters.installationStatus)?.label ?? filters.installationStatus}`"
                         data-testid="product-quick-actions-installation-status"
-                        @update:model-value="fetchPreview"
                       />
                     </div>
                     <div>
@@ -123,7 +122,6 @@
                         class="w-full"
                         :aria-label="`${$t('common.result')}: ${actionResultOptions.find((option) => option.value === filters.actionResult)?.label ?? filters.actionResult}`"
                         data-testid="product-quick-actions-action-result"
-                        @update:model-value="fetchPreview"
                       />
                     </div>
                   </div>
@@ -132,7 +130,6 @@
                       v-model="filters.outdatedOnly"
                       :aria-label="String($t('products.outdated.onClient'))"
                       data-testid="product-quick-actions-outdated-only"
-                      @update:model-value="fetchPreview"
                     />
                     <span class="text-xs">{{ $t('products.outdated.onClient') }}</span>
                   </span>
@@ -151,7 +148,6 @@
                     class="w-full"
                     :aria-label="`${$t('actions.request')}: ${actionRequestOptions.find((option) => option.value === actionRequest)?.label ?? actionRequest}`"
                     data-testid="product-quick-actions-action-request"
-                    @update:model-value="fetchPreview"
                   />
                 </div>
               </div>
@@ -168,7 +164,6 @@
                     class="w-full"
                     :aria-label="`${$t('fields.scope')}: ${scopeOptions.find((option) => option.value === scope)?.label ?? scope}`"
                     data-testid="product-quick-actions-scope"
-                    @update:model-value="fetchPreview"
                   />
                   <p class="mt-1 text-xs text-(--color-text-muted)">{{ scopeHelpText }}</p>
                 </div>
@@ -178,7 +173,7 @@
             <div class="flex-1 min-h-0 flex flex-col">
               <div class="flex items-center justify-between mb-1.5">
                 <span class="text-sm font-medium text-(--color-text-muted)">
-                  {{ $t('common.preview') }}
+                  {{ $t('common.preview') }} {{ $t('actions.applyingSupportedAction') }}
                 </span>
                 <div class="flex items-center gap-2">
                   <CoreAppButton
@@ -282,7 +277,7 @@
                   v-else
                   color="primary"
                   size="sm"
-                  :disabled="isReadOnly || previewData == null || applying"
+                  :disabled="isReadOnly || loadingPreview || previewCount === 0 || applying"
                   :loading="applying"
                   @click="applyActions"
                 >
@@ -412,6 +407,30 @@
   const PREVIEW_TIMEOUT_MS = 15000
   const PREVIEW_RENDER_LIMIT = 1500
 
+  const previewInputs = computed(() => ({
+    open: dialogOpen.value,
+    action: actionRequest.value,
+    scope: scope.value,
+    ...filters.value,
+    clients: [...selectionStore.selectedClients],
+    servers: [...selectionStore.selectedServers],
+  }))
+
+  watch(
+    previewInputs,
+    () => {
+      previewRequestId.value++
+      previewData.value = null
+      loadingPreview.value = false
+      applyResult.value = null
+    },
+    { flush: 'sync' },
+  )
+
+  watch(previewInputs, () => {
+    if (dialogOpen.value) void fetchPreview()
+  })
+
   const previewCount = computed(() => {
     if (!previewData.value) return 0
     return Object.values(previewData.value).reduce((sum, arr) => sum + arr.length, 0)
@@ -530,18 +549,24 @@
 
   async function callBulkProductActionWithTimeout(params: Record<string, unknown>) {
     const timeoutError = new Error('Preview request timed out. Please narrow the scope or add stricter conditions.')
+    let timeout: ReturnType<typeof setTimeout> | undefined
     const timeoutPromise = new Promise<never>((_, reject) => {
-      setTimeout(() => reject(timeoutError), PREVIEW_TIMEOUT_MS)
+      timeout = setTimeout(() => reject(timeoutError), PREVIEW_TIMEOUT_MS)
     })
-    return (await Promise.race([bulkProductAction(params as Parameters<typeof bulkProductAction>[0]), timeoutPromise])) as Awaited<
-      ReturnType<typeof bulkProductAction>
-    >
+    try {
+      return await Promise.race([bulkProductAction(params as Parameters<typeof bulkProductAction>[0]), timeoutPromise])
+    } finally {
+      clearTimeout(timeout)
+    }
   }
 
   async function fetchPreview() {
+    const requestId = ++previewRequestId.value
+    previewData.value = null
+    loadingPreview.value = false
+    if (!dialogOpen.value || actionRequest.value === NOT_APPLIED) return
     const params = buildParams(true)
     if (!params) return
-    const requestId = ++previewRequestId.value
     loadingPreview.value = true
     errorMessage.value = null
     try {
@@ -563,6 +588,7 @@
   const applyResult = ref<{ type: 'success' | 'error'; message: string } | null>(null)
 
   async function applyActions() {
+    if (isReadOnly.value || loadingPreview.value || previewCount.value === 0 || applying.value) return
     const params = buildParams(false)
     if (!params) return
     applying.value = true

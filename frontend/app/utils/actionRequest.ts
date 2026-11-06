@@ -8,6 +8,39 @@
  * License: AGPL-3.0
  */
 
+import type { ProductActionRequestChange, ProductRow } from '~/types'
+
+export interface ActionRequestChangeSummary {
+  changed: number
+  unsupported: number
+}
+
+export function applyBulkActionRequest(
+  products: Pick<ProductRow, 'productId' | 'actionRequest' | 'actions'>[],
+  selectedProductIds: string[],
+  actionRequest: string,
+  pending: Map<string, ProductActionRequestChange>,
+): ActionRequestChangeSummary {
+  const summary = { changed: 0, unsupported: 0, unchanged: 0, unavailable: 0 }
+  const productsById = new Map(products.map((product) => [product.productId, product]))
+  for (const productId of new Set(selectedProductIds)) {
+    const product = productsById.get(productId)
+    if (!product) {
+      continue
+    }
+    if (actionRequest !== 'none' && !product.actions?.includes(actionRequest)) {
+      summary.unsupported++
+      continue
+    }
+    const oldRequest = product.actionRequest || 'none'
+    const currentRequest = pending.get(productId)?.actionRequest ?? oldRequest
+    if (currentRequest !== actionRequest) summary.changed++
+    if (actionRequest === oldRequest) pending.delete(productId)
+    else pending.set(productId, { productId, actionRequest, oldRequest })
+  }
+  return summary
+}
+
 export type ActionRequestStatus = 'success' | 'warning' | 'error' | 'info' | 'neutral'
 
 export function getActionRequestStatus(value?: unknown): ActionRequestStatus {

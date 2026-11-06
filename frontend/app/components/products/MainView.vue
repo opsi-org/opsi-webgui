@@ -92,6 +92,7 @@
     <ProductsProcessActionsModal
       v-model:open="processActionsOpen"
       :selected-product-ids="selectedProductIds"
+      :show-results="false"
       @started="handleProcessActionsStarted"
       @completed="handleProcessActionsCompleted"
     />
@@ -383,7 +384,6 @@
     ProductActionRequestChange,
     EditablePropertyValue,
     BulkActionResult,
-    BulkActionDetail,
   } from '~/types'
   import type { ProductAdvancedFilters } from '~/components/products/AdvancedFiltersPopover.vue'
   import { getStoredDataTableFilter } from '~/composables/data-table/useDataTableFilter'
@@ -394,7 +394,8 @@
   import { useUiStore } from '~/stores/uiStore'
   import { useDataTableFilterStore } from '~/stores/dataTableFilterStore'
   import { storeToRefs } from 'pinia'
-  import { formatApiErrorMessage, normalizeActionResultDetails } from '~/composables/useApiHelpers'
+  import { formatApiErrorMessage, normalizeProcessActionResult } from '~/composables/useApiHelpers'
+  import { applyBulkActionRequest } from '~/utils/actionRequest'
 
   interface Props {
     productType: ProductType
@@ -445,7 +446,7 @@
   const bulkActionResult = ref<BulkActionResult | null>(null)
   const bulkResultModalOpen = ref(false)
   const bulkResultModalMounted = ref(false)
-  const bulkResultFilter = ref<'all' | 'failed' | 'succeeded'>('failed')
+  const bulkResultFilter = ref<'all' | 'failed' | 'succeeded' | 'info'>('failed')
   const pendingActionRequests = ref(new Map<string, ProductActionRequestChange>())
   const savingActionRequests = ref(false)
   const processingProcessActions = ref(false)
@@ -476,15 +477,9 @@
     bulkActionResult.value = result
     actionStatus.value = {
       type: result.type,
-      title: result.type === 'error' ? String($t('notify.errorActionsLoad')) : String($t('notify.product.actions.executed')),
-      message: String(
-        $t('actions.bulkSummary', {
-          totalProducts: result.totalProducts,
-          totalClients: result.totalClients,
-          succeeded: result.succeeded,
-          failed: result.failed,
-        }),
-      ),
+      title: String($t('actions.processResults')),
+      message:
+        result.skipped === result.totalClients ? String($t('actions.noActionRequests')) : String($t('actions.bulkSummary', { ...result })),
     }
     if (result.details.length > 0) fetchProducts()
   }
@@ -912,14 +907,12 @@
   function handleBulkActionRequest(actionRequest: string) {
     const selectedProducts = selectionStore.selectedProducts
     if (selectedProducts.length === 0) return
-    for (const productId of selectedProducts) {
-      const product = products.value.find((p) => p.productId === productId)
-      const oldReq = product?.actionRequest || 'none'
-      if (actionRequest === oldReq || (actionRequest === 'none' && !oldReq)) {
-        pendingActionRequests.value.delete(productId)
-      } else {
-        pendingActionRequests.value.set(productId, { productId, actionRequest, oldRequest: oldReq })
-      }
+    const summary = applyBulkActionRequest(products.value, selectedProducts, actionRequest, pendingActionRequests.value)
+    bulkActionResult.value = null
+    actionStatus.value = {
+      type: 'info',
+      title: String($t('actions.request')),
+      message: String($t('actions.requestChangeSummary', { ...summary })),
     }
   }
 
@@ -1042,37 +1035,18 @@
           }
           const result = await processActionRequests(clientIds, productIds)
           if (result.error) throw result.error
-          const resultData = result.data || {}
+          const executionResult = normalizeProcessActionResult(result.data, clientIds, {
+            noActionRequests: String($t('actions.noActionRequests')),
+            missingResult: String($t('actions.missingProcessResult')),
+          })
           if (processedIds.length > 0) {
-            setLiveStatus(processedIds, { kind: 'updated', message: String($t('actions.live.updated')) }, 12000)
+            for (const productId of processedIds) productLiveStatus.value.delete(productId)
           }
-          const details: BulkActionDetail[] = normalizeActionResultDetails(resultData)
-          const failedCount = details.filter((d) => !d.success).length
-          const succeededCount = details.length - failedCount
-          bulkActionResult.value = {
-            type: failedCount === 0 ? 'success' : succeededCount === 0 ? 'error' : 'warning',
-            totalClients: details.length,
-            totalProducts: processedIds.length,
-            succeeded: succeededCount,
-            failed: failedCount,
-            details,
-          }
-          actionStatus.value = {
-            type: bulkActionResult.value.type,
-            title:
-              bulkActionResult.value.type === 'error'
-                ? String($t('notify.errorActionsLoad'))
-                : String($t('notify.product.actions.executed')),
-            message: String(
-              $t('actions.bulkSummary', {
-                totalProducts: processedIds.length,
-                totalClients: details.length,
-                succeeded: succeededCount,
-                failed: failedCount,
-              }),
-            ),
-          }
-          onResult?.({ type: 'success', message: String($t('notify.product.actions.executed')) })
+          handleProcessActionsCompleted(executionResult)
+          onResult?.({
+            type: executionResult.type === 'info' ? 'warning' : executionResult.type,
+            message: actionStatus.value?.message || String($t('actions.processTriggered')),
+          })
         } catch (e) {
           bulkActionResult.value = null
           actionStatus.value = { type: 'error', title: String($t('notify.errorActionsLoad')), message: formatApiErrorMessage(e) }

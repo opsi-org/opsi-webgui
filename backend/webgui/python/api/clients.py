@@ -62,6 +62,7 @@ from ..utils import (
 	read_only_check,
 	user_register,
 )
+from .products import get_product_actions
 
 api_router = APIRouter()
 logger = get_logger()
@@ -859,7 +860,7 @@ def delete_client(request: Request, clientid: str) -> RESTResponse:  # pylint: d
 
 
 class ProcessActionRPC(BaseModel):  # pylint: disable=too-few-public-methods
-	client_ids: list[str] = Field(..., max_length=MAX_IDS_PER_REQUEST)
+	client_ids: list[str] = Field(..., min_length=1, max_length=MAX_IDS_PER_REQUEST)
 	product_ids: list[str] | None = Field(default=None, max_length=MAX_IDS_PER_REQUEST)
 	visibility: Literal["", "visible", "hidden"] | None = ""
 
@@ -868,14 +869,36 @@ class ProcessActionRPC(BaseModel):  # pylint: disable=too-few-public-methods
 @rest_api
 async def host_control_process_action(request: Request, data: ProcessActionRPC) -> RESTResponse:  # pylint: disable=unused-argument
 	"""
-	Run process action on clients
+	Run only pending product action requests and identify clients with nothing to execute.
 	"""
 	try:
-		result = await backend.hostControl_processActionRequests(
-			hostIds=data.client_ids,
-			productIds=data.product_ids or [],
-			visibility=data.visibility or "",
+		pocs = await run_in_threadpool(
+			backend.productOnClient_getObjects,
+			clientId=data.client_ids,
+			productId=data.product_ids or [],
 		)
+		pending_by_client: dict[str, set[str]] = {client_id: set() for client_id in data.client_ids}
+		for poc in pocs:
+			if poc.clientId in pending_by_client and poc.actionRequest and poc.actionRequest != "none":
+				pending_by_client[poc.clientId].add(poc.productId)
+
+		active_clients = [client_id for client_id, product_ids in pending_by_client.items() if product_ids]
+		pending_products = sorted({product_id for product_ids in pending_by_client.values() for product_id in product_ids})
+		result = {}
+		# An empty product list means "all products" to hostControl. Always pass the
+		# pending IDs explicitly so its per-client filtering also applies in all-products mode.
+		if active_clients:
+			result = await backend.hostControl_processActionRequests(
+				hostIds=active_clients,
+				productIds=pending_products,
+				visibility=data.visibility or "",
+			)
+		for client_id, product_ids in pending_by_client.items():
+			if not product_ids:
+				result[client_id] = {"result": None, "error": None, "skipped": True, "productIds": []}
+			else:
+				client_result = result.setdefault(client_id, {"result": None, "error": "No process action response received from client."})
+				client_result["productIds"] = sorted(product_ids)
 	except Exception as err:  # pylint: disable=broad-except
 		logger.error("Failed to execute process actions: %s", err)
 		raise OpsiApiException(
@@ -1130,7 +1153,7 @@ def set_product_action(  # pylint: disable=unused-argument, too-many-branches
 	request: Request, product_action: ProductAction
 ) -> RESTResponse:
 	"""
-	Set product action where condition
+	Set supported product actions matching the selected conditions.
 	"""
 
 	try:  # pylint: disable=too-many-nested-blocks
@@ -1191,11 +1214,46 @@ def set_product_action(  # pylint: disable=unused-argument, too-many-branches
 			result = set(backend.productOnClient_getObjects(clientId=hosts))
 			if not product_action.installation_status and not product_action.action_result:
 				poc_list = result
-		for poc in poc_list:
+		candidates = {(poc.clientId, poc.productId, poc.productType): poc for poc in poc_list}
+
+		if product_action.installation_status == "not_installed":
+			for host in hosts:
+				depot = clients_to_depots.get(host)
+				if not depot:
+					continue
+				for prod in result.union(set(backend.productOnDepot_getObjects(depotId=depot))):
+					key = (host, prod.productId, prod.productType)
+					if key in candidates:
+						continue
+					candidates[key] = ProductOnClient(
+						productId=prod.productId,
+						productType=prod.productType,
+						clientId=host,
+						productVersion=prod.productVersion,
+						packageVersion=prod.packageVersion,
+					)
+
+		depot_products = {
+			(pod.depotId, pod.productId, pod.productType): pod
+			for pod in (backend.productOnDepot_getObjects(depotId=depots) if depots else [])
+		}
+		actions_by_version: dict[tuple[str, str, str], list[str]] = {}
+		supported_pocs = []
+		for poc in candidates.values():
+			# Check the version that will run on the client, not an older installed version.
+			product = depot_products.get((clients_to_depots.get(poc.clientId), poc.productId, poc.productType), poc)
+			if product_action.action not in ("", "none"):
+				key = (product.productId, product.productVersion, product.packageVersion)
+				if key not in actions_by_version:
+					actions_by_version[key] = get_product_actions(*key)
+				if product_action.action not in actions_by_version[key]:
+					logger.info(
+						"Skipping unsupported action %r for product %s on client %s", product_action.action, poc.productId, poc.clientId
+					)
+					continue
 			poc.actionRequest = product_action.action
-			if poc.clientId not in updates:
-				updates[poc.clientId] = []
-			updates[poc.clientId].append(
+			supported_pocs.append(poc)
+			updates.setdefault(poc.clientId, []).append(
 				{
 					"productId": poc.productId,
 					"clientId": poc.clientId,
@@ -1206,37 +1264,8 @@ def set_product_action(  # pylint: disable=unused-argument, too-many-branches
 				}
 			)
 
-		if product_action.installation_status == "not_installed":
-			for host in hosts:
-				depot = clients_to_depots.get(host)
-				if not depot:
-					continue
-				for prod in result.union(set(backend.productOnDepot_getObjects(depotId=depot))):
-					if host not in updates:
-						updates[host] = []
-					poc_list.add(
-						ProductOnClient(
-							productId=prod.productId,
-							productType=prod.productType,
-							clientId=host,
-							productVersion=prod.productVersion,
-							packageVersion=prod.packageVersion,
-							actionRequest=product_action.action,
-						)
-					)
-					updates[host].append(
-						{
-							"productId": prod.productId,
-							"productType": prod.productType,
-							"clientId": host,
-							"productVersion": prod.productVersion,
-							"packageVersion": prod.packageVersion,
-							"actionRequest": product_action.action,
-						}
-					)
-
-		if not product_action.demoMode:
-			result = backend.productOnClient_updateObjects(poc_list)
+		if not product_action.demoMode and supported_pocs:
+			backend.productOnClient_updateObjects(supported_pocs)
 
 		return RESTResponse(http_status=200, data=updates)
 	except Exception as err:  # pylint: disable=broad-except

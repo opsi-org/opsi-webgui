@@ -9,6 +9,8 @@
  *
  * useApiHelpers - API helper functions wrapping backend FastAPI endpoints.
  */
+import type { BulkActionResult } from '~/types'
+
 interface ApiResponse<T> {
   data: T | null
   error: Error | null
@@ -71,7 +73,41 @@ export function normalizeActionResults(results: Record<string, unknown> | null |
 }
 
 export function normalizeActionResultDetails(results: Record<string, unknown> | null | undefined) {
+  console.log('results', results)
   return Object.entries(normalizeActionResults(results)).map(([clientId, result]) => ({ clientId, ...result }))
+}
+
+export function normalizeProcessActionResult(
+  results: Record<string, unknown> | null | undefined,
+  clientIds: string[],
+  messages: { noActionRequests: string; missingResult: string },
+): BulkActionResult {
+  const normalized = normalizeActionResults(results)
+  const details = clientIds.map((clientId) => {
+    const raw = results?.[clientId]
+    const result = raw && typeof raw === 'object' ? (raw as Record<string, unknown>) : undefined
+    const skipped = result?.skipped === true
+    const productIds = Array.isArray(result?.productIds) ? result.productIds.filter((id): id is string => typeof id === 'string') : []
+    return {
+      clientId,
+      success: !skipped && normalized[clientId]?.success === true,
+      skipped,
+      productIds,
+      message: skipped ? messages.noActionRequests : normalized[clientId]?.message || (!result ? messages.missingResult : undefined),
+    }
+  })
+  const skipped = details.filter((detail) => detail.skipped).length
+  const succeeded = details.filter((detail) => detail.success).length
+  const failed = details.length - succeeded - skipped
+  return {
+    type: skipped === details.length ? 'info' : failed === 0 ? 'success' : succeeded === 0 ? 'error' : 'warning',
+    totalClients: details.length,
+    totalProducts: new Set(details.flatMap((detail) => detail.productIds)).size,
+    succeeded,
+    failed,
+    skipped,
+    details,
+  }
 }
 
 export function buildQueryString(params?: Record<string, unknown>): string {

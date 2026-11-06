@@ -120,22 +120,43 @@
       </CoreAppCard>
     </template>
   </CoreAppModal>
+  <CoreAppModal v-if="showResults && executionResult" v-model:open="resultsOpen" :ui="{ content: 'w-[94vw] max-w-4xl max-h-[84vh]' }">
+    <template #content>
+      <div class="p-4 space-y-3">
+        <div class="flex items-center justify-between gap-2">
+          <h3 class="text-sm font-heading uppercase">{{ $t('actions.processResults') }}</h3>
+          <CoreAppButton :icon="icons.x" variant="ghost" :aria-label="String($t('common.close'))" @click="resultsOpen = false" />
+        </div>
+        <CoreAppAlertInline
+          :color="executionResult.type"
+          :description="
+            executionResult.skipped === executionResult.totalClients
+              ? String($t('actions.noActionRequests'))
+              : String($t('actions.bulkSummary', { ...executionResult }))
+          "
+        />
+        <CoreAppActionResultsTable v-model:filter="resultFilter" :details="executionResult.details" />
+      </div>
+    </template>
+  </CoreAppModal>
 </template>
 
 <script setup lang="ts">
   import { useSelectionStore } from '~/stores/selectionStore'
   import { useUiStore } from '~/stores/uiStore'
   import type { BulkActionResult } from '~/types'
-  import { normalizeActionResultDetails } from '~/composables/useApiHelpers'
+  import { formatApiErrorMessage, normalizeProcessActionResult } from '~/composables/useApiHelpers'
 
   const open = defineModel<boolean>('open', { default: false })
 
   interface Props {
     selectedProductIds?: string[]
+    showResults?: boolean
   }
 
   const props = withDefaults(defineProps<Props>(), {
     selectedProductIds: () => [],
+    showResults: true,
   })
 
   const emit = defineEmits<{
@@ -151,6 +172,9 @@
   const { isReadOnly } = useUserPermissions()
 
   const executing = ref(false)
+  const executionResult = ref<BulkActionResult | null>(null)
+  const resultsOpen = ref(false)
+  const resultFilter = ref<'all' | 'failed' | 'succeeded' | 'info'>('all')
   const productMode = ref<'all' | 'selected'>('all')
   const visibility = computed({
     get: () => uiStore.productActions.visibility,
@@ -174,41 +198,43 @@
     return sortedA.every((v, i) => v === sortedB[i])
   }
 
+  function complete(result: BulkActionResult) {
+    executionResult.value = result
+    resultFilter.value = result.failed ? 'failed' : 'all'
+    resultsOpen.value = props.showResults
+    emit('completed', result)
+  }
+
   async function executeProcessAction() {
-    if (clientIds.value.length === 0) return
+    if (isReadOnly.value || executing.value || clientIds.value.length === 0) return
     executing.value = true
-    const productIds = productMode.value === 'selected' ? props.selectedProductIds : undefined
-    emit('started', clientIds.value.length, productIds?.length ?? 0)
+    const requestedClientIds = [...clientIds.value]
+    const productIds = productMode.value === 'selected' ? [...props.selectedProductIds] : undefined
+    emit('started', requestedClientIds.length, productIds?.length ?? 0)
     open.value = false
     try {
-      const result = await processActionRequests(clientIds.value, productIds, visibility.value || undefined)
+      const result = await processActionRequests(requestedClientIds, productIds, visibility.value || undefined)
 
       if (result.error) throw result.error
 
-      const details = normalizeActionResultDetails(result.data)
-      const failed = details.filter((d) => !d.success).length
-      const succeeded = details.length - failed
-      const executionResult: BulkActionResult = {
-        type: failed === 0 ? 'success' : succeeded === 0 ? 'error' : 'warning',
-        totalClients: details.length,
-        totalProducts: productIds?.length ?? 0,
-        succeeded,
-        failed,
-        details,
-      }
-
-      emit('completed', executionResult)
+      complete(
+        normalizeProcessActionResult(result.data, requestedClientIds, {
+          noActionRequests: String($t('actions.noActionRequests')),
+          missingResult: String($t('actions.missingProcessResult')),
+        }),
+      )
     } catch (e) {
-      emit('completed', {
+      complete({
         type: 'error',
-        totalClients: clientIds.value.length,
+        totalClients: requestedClientIds.length,
         totalProducts: 0,
         succeeded: 0,
-        failed: clientIds.value.length,
-        details: clientIds.value.map((clientId) => ({
+        failed: requestedClientIds.length,
+        skipped: 0,
+        details: requestedClientIds.map((clientId) => ({
           clientId,
           success: false,
-          message: e instanceof Error ? e.message : String($t('notify.errorActionsLoad')),
+          message: formatApiErrorMessage(e),
         })),
       })
     } finally {
