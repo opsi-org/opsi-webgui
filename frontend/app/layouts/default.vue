@@ -72,7 +72,9 @@
               <template v-if="userStore.globalError === 'auth.required'" #description>
                 <span>
                   {{ $t('auth.required') }}
-                  <NuxtLink to="/login" class="underline font-medium">{{ $t('auth.goToLogin') }}</NuxtLink>
+                  <NuxtLink to="/login" class="underline font-medium" @click.prevent="goToLogin">
+                    {{ $t('auth.goToLogin') }}
+                  </NuxtLink>
                 </span>
               </template>
             </CoreAppAlertInline>
@@ -205,6 +207,7 @@
   const icons = useIcons()
   const runtimeConfig = useRuntimeConfig()
   const userStore = useUserStore()
+  const { callLogout } = useApiHelpers()
   const uiStore = useUiStore()
   const messageBusStore = useMessageBusStore()
   const { healthCounts: cachedHealthCounts, diagnosticsFetched } = useCachedData()
@@ -212,6 +215,15 @@
   const { isWarning, formattedTime } = useSessionTimer(true)
   const $route = useRoute()
   const { t: i18nT } = useI18n()
+
+  async function goToLogin() {
+    try {
+      await callLogout()
+    } finally {
+      userStore.logout()
+      await navigateTo('/login')
+    }
+  }
 
   const defaultPage = ref('/clients')
   const showSettings = ref(false)
@@ -317,7 +329,9 @@
 
   onMounted(() => {
     updateDefaultPage()
-    void messageBusStore.connect().catch(() => undefined)
+    if (userStore.isAuthenticated) {
+      void messageBusStore.connect().catch(() => undefined)
+    }
     const checkMobile = () => {
       isMobile.value = window.innerWidth < 768
       uiStore.setIsMobile(isMobile.value)

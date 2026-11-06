@@ -12,6 +12,8 @@
 import { defineStore } from 'pinia'
 import { encode, decode } from '@msgpack/msgpack'
 import { markRaw } from 'vue'
+import { useUserStore } from '~/stores/userStore'
+import { isAuthenticationFailure } from '../utils/requestHeaders'
 import { safeLocalStorage } from '~/utils/storage'
 
 const connectionPromises = new WeakMap<object, Promise<WebSocket>>()
@@ -81,6 +83,9 @@ export const useMessageBusStore = defineStore('messageBus', {
   },
   actions: {
     connect(): Promise<WebSocket> {
+      if (!useUserStore().isAuthenticated) {
+        return Promise.reject(new Error('Cannot connect to the messagebus without an authenticated session'))
+      }
       if (this.bus?.readyState === WebSocket.OPEN) return Promise.resolve(this.bus)
       const existingConnection = connectionPromises.get(this)
       if (existingConnection) return existingConnection
@@ -93,12 +98,30 @@ export const useMessageBusStore = defineStore('messageBus', {
 
       const runtimeConfig = useRuntimeConfig()
       const host = window.location.hostname
+      const apiBaseUrl = String(runtimeConfig.public.NUXT_PUBLIC_API_BASE || '') + String(runtimeConfig.public.API_PATH || '')
       const port =
         process.env.NODE_ENV === 'production'
           ? window.location.port
           : Number((runtimeConfig as { public: { OPSICONFD_PORT?: string } }).public.OPSICONFD_PORT) || 4447
       const ws = markRaw(new WebSocket(`wss://${host}:${port}/messagebus/v1`))
       ws.binaryType = 'arraybuffer'
+
+      let authenticationCheck: Promise<boolean> | undefined
+      const checkAuthentication = () => {
+        authenticationCheck ??= fetch(`${apiBaseUrl}/user/getsettings`, { credentials: 'include' })
+          .then(async (response) => {
+            const responseData = response.status === 403 ? await response.json() : undefined
+            if (isAuthenticationFailure(response.status, responseData)) {
+              const userStore = useUserStore()
+              userStore.globalError = 'auth.required'
+              userStore.logout()
+              return false
+            }
+            return useUserStore().isAuthenticated
+          })
+          .catch(() => useUserStore().isAuthenticated)
+        return authenticationCheck
+      }
 
       let connectionTimeout: ReturnType<typeof setTimeout>
       const connectionPromise = new Promise<WebSocket>((resolve, reject) => {
@@ -150,12 +173,17 @@ export const useMessageBusStore = defineStore('messageBus', {
             this.bus = undefined
             this._connected = false
           }
-          if (wasSameBus) this._scheduleReconnect()
+          if (wasSameBus) {
+            void checkAuthentication().then((isAuthenticated) => {
+              if (isAuthenticated && useUserStore().isAuthenticated) this._scheduleReconnect()
+            })
+          }
           reject(new Error('Messagebus connection closed before becoming ready'))
         }
 
         ws.onerror = () => {
           this._connecting = false
+          void checkAuthentication()
           this._consecutiveFailures++
           if (this._consecutiveFailures >= 3 && !this.certWarning) {
             this.certWarning = true
@@ -174,6 +202,7 @@ export const useMessageBusStore = defineStore('messageBus', {
     },
 
     _scheduleReconnect() {
+      if (!useUserStore().isAuthenticated) return
       if (this._reconnectTimer) return
       const delay = Math.min(this._reconnectDelay, 30000)
       this._reconnectTimer = setTimeout(() => {
@@ -188,6 +217,9 @@ export const useMessageBusStore = defineStore('messageBus', {
         clearTimeout(this._reconnectTimer)
         this._reconnectTimer = null
       }
+      this._connecting = false
+      this._consecutiveFailures = 0
+      this.certWarning = false
       if (this.bus) {
         const ws = this.bus
         this.bus = undefined

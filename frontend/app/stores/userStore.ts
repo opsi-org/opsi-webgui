@@ -58,6 +58,7 @@ export const useUserStore = defineStore('user', {
   actions: {
     login(username: string) {
       this.errorLoggedOutShown = false
+      this.globalError = undefined
       this.username = username
       this.usernameUpdated = Date.now()
       this.setSession()
