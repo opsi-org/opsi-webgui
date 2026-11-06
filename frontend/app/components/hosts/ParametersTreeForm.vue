@@ -113,7 +113,7 @@
                 color="neutral"
                 :icon="icons.x"
                 :title="$t('common.discard')"
-                @click="() => node.param && discardSingleParam(node.param.configId)"
+                @click="() => param && discardSingleParam(param.configId)"
                 intent="destructive"
               />
             </div>
