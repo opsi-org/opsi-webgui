@@ -199,14 +199,17 @@ export interface BulkActionDetail {
   clientId: string
   success: boolean
   message?: string
+  skipped?: boolean
+  productIds?: string[]
 }
 
 export interface BulkActionResult {
-  type: 'success' | 'warning' | 'error'
+  type: 'success' | 'warning' | 'error' | 'info'
   totalClients: number
   totalProducts: number
   succeeded: number
   failed: number
+  skipped: number
   details: BulkActionDetail[]
 }
 

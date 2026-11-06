@@ -1,12 +1,19 @@
 {
   "actions": {
+    "requestChangeSummary": "Aktionsanforderung für {changed} Produkt(e) geändert. {unsupported} übersprungen, da die Aktion nicht unterstützt wird.",
     "live": {
       "processing": "Wird verarbeitet",
       "saving": "Wird gespeichert",
       "updated": "Aktualisiert"
     },
-    "bulkSummary": "{totalProducts} Produktaktion(en) für {totalClients} Client(s) - {succeeded} erfolgreich, {failed} fehlgeschlagen",
+    "bulkSummary": "{totalProducts} Produkt(e) mit ausstehenden Aktionen für {totalClients} Client(s) - {succeeded} ausgelöst, {failed} fehlgeschlagen, {skipped} übersprungen",
+    "noActionRequests": "Keine Aktionsanforderungen für die ausgewählten Produkte auszuführen.",
+    "skipped": "Übersprungen",
+    "missingProcessResult": "Keine Antwort zur Aktionsverarbeitung vom Client erhalten.",
+    "processResults": "Ergebnisse der Aktionsverarbeitung",
+    "processTriggered": "Aktionsverarbeitung angefordert.",
     "processingSummary": "{totalProducts} Produktaktion(en) für {totalClients} Client(s) werden verarbeitet...",
+    "applyingSupportedAction": "(Nur für Produkte, die die angeforderte Aktion unterstützen.)",
     "failed": "Fehlgeschlagene Aktionen",
     "failedClients": "Fehlgeschlagene Clients",
     "failedClientsHelp": "Zeigt aktivierte Clients, bei denen mindestens ein ProductOnClient den Status actionResult = failed hat.",

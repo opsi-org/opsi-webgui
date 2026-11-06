@@ -337,7 +337,7 @@
   const deployOptions = ref({ username: '', password: '', type: 'windows' })
   const actionResults = ref<Record<string, { success: boolean; message?: string }>>({})
   const statusMessage = ref<{ type: 'success' | 'error' | 'warning'; message: string } | null>(null)
-  const resultFilter = ref<'all' | 'failed' | 'succeeded'>('failed')
+  const resultFilter = ref<'all' | 'failed' | 'succeeded' | 'info'>('failed')
   const actionResultDetails = computed(() => Object.entries(actionResults.value).map(([clientId, result]) => ({ clientId, ...result })))
 
   const renameHostname = ref('')
