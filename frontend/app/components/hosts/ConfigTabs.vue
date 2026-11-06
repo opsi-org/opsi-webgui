@@ -292,7 +292,7 @@
   interface TreeNode {
     key: string
     label: string
-    param?: Param
+    params?: Param[]
     children?: TreeNode[]
     leafCount?: number
   }
@@ -308,56 +308,57 @@
         .sort(),
     ]
 
-    function buildSubTree(params: Param[], prefix: string): TreeNode[] {
-      type ParamLeaf = { __param: Param }
-      type ParamBranch = Map<string, ParamLeaf | ParamBranch>
+    function buildSubTree(params: Param[], category: string): TreeNode[] {
+      interface ParamNode {
+        params: Param[]
+        children: Map<string, ParamNode>
+      }
+      type ParamBranch = Map<string, ParamNode>
       const root: ParamBranch = new Map()
+      const categoryPrefix = category + '.'
       for (const p of params) {
         if (matches && !matches(p.configId) && !matches(p.description || '')) continue
-        const parts = p.configId.split('.')
+        const configId = p.configId.startsWith(categoryPrefix) ? p.configId.slice(categoryPrefix.length) : p.configId
+        const parts = configId.split('.')
         let node = root
-        for (let i = 0; i < parts.length; i++) {
-          const part = parts[i]
-          if (!part) continue
-          if (i === parts.length - 1) {
-            node.set(part, { __param: p })
-          } else {
-            const existing = node.get(part)
-            if (existing instanceof Map) {
-              node = existing
-            } else {
-              const branch: ParamBranch = new Map()
-              node.set(part, branch)
-              node = branch
-            }
+        let current: ParamNode | undefined
+        for (const part of parts) {
+          current = node.get(part)
+          if (!current) {
+            current = { params: [], children: new Map() }
+            node.set(part, current)
           }
+          node = current.children
         }
+        current?.params.push(p)
       }
       function toTree(obj: ParamBranch, pre: string): TreeNode[] {
         return [...obj.entries()]
           .sort(([, a], [, b]) => {
-            const aP = !(a instanceof Map)
-            const bP = !(b instanceof Map)
-            if (aP && !bP) return 1
-            if (!aP && bP) return -1
+            const aHasChildren = a.children.size > 0
+            const bHasChildren = b.children.size > 0
+            if (aHasChildren && !bHasChildren) return -1
+            if (!aHasChildren && bHasChildren) return 1
             return 0
           })
           .map(([key, value]) => {
-            if (!(value instanceof Map)) {
-              return { key: pre + key, label: key, param: value.__param, leafCount: 1 }
+            const children = toTree(value.children, pre + key + '.')
+            const leafCount = value.params.length + children.reduce((sum, c) => sum + (c.leafCount ?? 0), 0)
+            return {
+              key: pre + key,
+              label: key,
+              ...(value.params.length > 0 ? { params: value.params } : {}),
+              ...(children.length > 0 ? { children } : {}),
+              leafCount,
             }
-            const children = toTree(value, pre + key + '.')
-            const leafCount = children.reduce((sum, c) => sum + (c.leafCount ?? 0), 0)
-            return { key: pre + key, label: key, children, leafCount }
           })
-          .filter((n) => n.param || (n.children && n.children.length > 0))
       }
-      return toTree(root, prefix)
+      return toTree(root, categoryPrefix)
     }
 
     return categoryKeys
       .map((cat) => {
-        const children = buildSubTree(raw[cat] || [], cat + '.')
+        const children = buildSubTree(raw[cat] || [], cat)
         const leafCount = children.reduce((sum, c) => sum + (c.leafCount ?? 0), 0)
         return { key: cat, label: cat, children, leafCount }
       })

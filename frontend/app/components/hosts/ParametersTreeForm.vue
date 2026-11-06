@@ -48,11 +48,11 @@
         </div>
       </template>
 
-      <template v-else-if="node.param">
+      <template v-for="(param, paramIndex) in node.params" :key="`${node.key}:${paramIndex}`">
         <div
           :class="[
             'flex items-start gap-1 px-1.5 py-1 rounded transition-colors',
-            changedParams.has(node.param.configId) ? 'bg-(--color-changed-bg)' : 'hover:bg-(--color-surface-hover)',
+            changedParams.has(param.configId) ? 'bg-(--color-changed-bg)' : 'hover:bg-(--color-surface-hover)',
           ]"
           :style="{ paddingLeft: `${8 + getDepth(node.key) * 16}px` }"
         >
@@ -62,64 +62,58 @@
             <div
               class="min-w-0 w-full md:w-2/5 flex items-center gap-1 group/paramrow px-1.5 py-0.5 rounded bg-(--color-surface-hover) md:bg-transparent md:px-0 md:py-0"
             >
-              <span
-                class="text-xs font-medium md:font-normal text-(--color-text) truncate select-text min-w-0"
-                :title="node.param.configId"
-              >
-                {{ node.param.configId }}
+              <span class="text-xs font-medium md:font-normal text-(--color-text) truncate select-text min-w-0" :title="param.configId">
+                {{ param.configId }}
               </span>
               <span
                 class="flex items-center gap-0.5 shrink-0 opacity-0 group-hover/paramrow:opacity-100 group-focus-within/paramrow:opacity-100 transition-opacity"
               >
                 <CoreAppButton
                   size="xs"
-                  :icon="clipboard.isCopied(node.param.configId) ? icons.check : icons.copy"
+                  :icon="clipboard.isCopied(param.configId) ? icons.check : icons.copy"
                   variant="ghost"
-                  :color="clipboard.isCopied(node.param.configId) ? 'success' : 'neutral'"
+                  :color="clipboard.isCopied(param.configId) ? 'success' : 'neutral'"
                   class="h-5! min-h-5! px-1!"
-                  :title="String(clipboard.isCopied(node.param.configId) ? $t('common.copied') : $t('common.copy'))"
-                  :aria-label="`${String($t('common.copy'))} ${node.param.configId}`"
-                  @click="copyToClipboard(node.param.configId)"
+                  :title="String(clipboard.isCopied(param.configId) ? $t('common.copied') : $t('common.copy'))"
+                  :aria-label="`${String($t('common.copy'))} ${param.configId}`"
+                  @click="copyToClipboard(param.configId)"
                 />
-                <CoreAppTooltip v-if="node.param.description" :text="node.param.description">
+                <CoreAppTooltip v-if="param.description" :text="param.description">
                   <CoreAppButton
                     size="xs"
                     :icon="icons.info"
                     variant="ghost"
                     color="neutral"
                     class="h-5! min-h-5! px-1!"
-                    :aria-label="node.param.description"
+                    :aria-label="param.description"
                   />
                 </CoreAppTooltip>
               </span>
-              <span
-                v-if="changedParams.has(node.param.configId)"
-                class="inline-flex items-center text-xs text-(--color-changed-text) ml-0.5"
-              >
+              <span v-if="changedParams.has(param.configId)" class="inline-flex items-center text-xs text-(--color-changed-text) ml-0.5">
                 <CoreAppIcon :name="icons.pencilSquare" class="w-3 h-3" />
               </span>
             </div>
             <div class="w-full md:flex-1 flex items-center gap-1.5 min-w-0">
               <CoreAppPropertyFormItem
-                :model-value="currentValue(node.param)"
+                :model-value="currentValue(param)"
                 size="xs"
-                :type="node.param.type === 'BoolConfig' ? 'bool' : 'unicode'"
-                :possible-values="node.param.possibleValues || []"
-                :multi-value="node.param.multiValue"
-                :editable="node.param.editable"
+                :type="param.type === 'BoolConfig' ? 'bool' : 'unicode'"
+                :possible-values="param.possibleValues || []"
+                :multi-value="param.multiValue"
+                :editable="param.editable"
                 :disabled="false"
-                :config-id="node.param.configId"
-                :password="isPasswordParam(node.param.configId)"
-                @update:model-value="(v: unknown) => node.param && setParam(node.param, v)"
+                :config-id="param.configId"
+                :password="isPasswordParam(param.configId)"
+                @update:model-value="(v: unknown) => setParam(param, v)"
               />
               <CoreAppButton
-                v-if="changedParams.has(node.param.configId)"
+                v-if="changedParams.has(param.configId)"
                 size="xs"
                 variant="ghost"
                 color="neutral"
                 :icon="icons.x"
                 :title="$t('common.discard')"
-                @click="() => node.param && discardSingleParam(node.param.configId)"
+                @click="() => param && discardSingleParam(param.configId)"
                 intent="destructive"
               />
             </div>
@@ -152,7 +146,7 @@
   interface TreeNode {
     key: string
     label: string
-    param?: Param
+    params?: Param[]
     children?: TreeNode[]
     leafCount?: number
   }
@@ -194,45 +188,44 @@
   }
 
   function buildTree(params: Param[]): TreeNode[] {
-    type ParamLeaf = { __param: Param }
-    type ParamBranch = Map<string, ParamLeaf | ParamBranch>
+    interface ParamNode {
+      params: Param[]
+      children: Map<string, ParamNode>
+    }
+    type ParamBranch = Map<string, ParamNode>
     const root: ParamBranch = new Map()
     for (const p of params) {
       const parts = p.configId.split('.')
       let node = root
-      for (let i = 0; i < parts.length; i++) {
-        const part = parts[i]
-        if (!part) continue
-        if (i === parts.length - 1) {
-          node.set(part, { __param: p })
-        } else {
-          const existing = node.get(part)
-          if (existing instanceof Map) {
-            node = existing
-          } else {
-            const branch: ParamBranch = new Map()
-            node.set(part, branch)
-            node = branch
-          }
+      let current: ParamNode | undefined
+      for (const part of parts) {
+        current = node.get(part)
+        if (!current) {
+          current = { params: [], children: new Map() }
+          node.set(part, current)
         }
+        node = current.children
       }
+      current?.params.push(p)
     }
     function toTree(obj: ParamBranch, prefix = ''): TreeNode[] {
       const entries = [...obj.entries()]
       entries.sort(([, a], [, b]) => {
-        const aIsParam = !(a instanceof Map)
-        const bIsParam = !(b instanceof Map)
-        if (aIsParam && !bIsParam) return 1
-        if (!aIsParam && bIsParam) return -1
+        const aHasChildren = a.children.size > 0
+        const bHasChildren = b.children.size > 0
+        if (aHasChildren && !bHasChildren) return -1
+        if (!aHasChildren && bHasChildren) return 1
         return 0
       })
       return entries.map(([key, value]) => {
-        if (!(value instanceof Map)) {
-          return { key: prefix + key, label: key, param: value.__param, leafCount: 1 }
-        } else {
-          const children = toTree(value, prefix + key + '.')
-          const leafCount = children.reduce((sum, c) => sum + (c.leafCount ?? 0), 0)
-          return { key: prefix + key, label: key, children, leafCount }
+        const children = toTree(value.children, prefix + key + '.')
+        const leafCount = value.params.length + children.reduce((sum, c) => sum + (c.leafCount ?? 0), 0)
+        return {
+          key: prefix + key,
+          label: key,
+          ...(value.params.length > 0 ? { params: value.params } : {}),
+          ...(children.length > 0 ? { children } : {}),
+          leafCount,
         }
       })
     }
