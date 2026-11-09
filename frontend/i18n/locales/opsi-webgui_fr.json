@@ -476,13 +476,13 @@
         "label": "Mode lecture seule"
       },
       "serverWrite": {
-        "disabled": "user.{username}.privilege.host.opsiserver.write = false → Configuration serveur, paramètres de dépôt et maintenance bloqués",
+        "disabled": "user.{username}.privilege.host.opsiserver.write = false → Configuration serveur et paramètres de dépôt en lecture seule",
         "enabled": "user.{username}.privilege.host.opsiserver.write = true → Configuration serveur modifiable",
         "label": "Écriture config serveur"
       },
       "terminal": {
-        "disabled": "opsiconfd disabled-features: messagebus_terminal → La page Terminal est désactivée",
-        "enabled": "opsiconfd disabled-features: messagebus_terminal n'est PAS listé → Page Terminal accessible à /admin/terminal",
+        "disabled": "Terminal bloqué : ConfigServer dans user.{username}.connect.terminal.forbidden, mode lecture seule ou terminal/messagebus_terminal désactivé",
+        "enabled": "Terminal ConfigServer autorisé : aucune interdiction de rôle, aucun mode lecture seule et fonctions terminal activées",
         "label": "Terminal serveur"
       }
     }

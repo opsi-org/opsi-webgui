@@ -110,7 +110,7 @@ RUN ln -sf /workspace/backend/${ADDON_ID} /var/lib/opsiconfd/addons/${ADDON_ID}
 # Node.js 22 LTS + pnpm
 RUN curl -fsSL https://deb.nodesource.com/setup_22.x | bash - \
 	&& apt-get install -y --no-install-recommends nodejs \
-	&& npm install -g pnpm \
+	&& npm install -g pnpm @fission-ai/openspec@1.16.0 \
 	&& apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # Playwright / Chromium system libraries for the e2e suite.

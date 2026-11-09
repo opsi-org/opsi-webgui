@@ -407,6 +407,7 @@
   }
 
   function setParam(p: Param, value: unknown) {
+    if (props.readonly) return
     const orig = getOriginalValue(p)
     if (JSON.stringify(orig) === JSON.stringify(value)) changedParams.value.delete(p.configId)
     else changedParams.value.set(p.configId, value)
@@ -590,6 +591,7 @@
   )
 
   async function saveParameters() {
+    if (props.readonly) return
     savingParams.value = true
     try {
       const changes = Array.from(changedParams.value.entries()).map(([configId, value]) => ({
@@ -611,7 +613,7 @@
   }
 
   async function saveAttributes() {
-    if (!props.hostId) return
+    if (props.readonly || !props.hostId) return
     savingAttrs.value = true
     try {
       // Only send changed attributes to avoid re-hashing already-stored password fields

@@ -28,6 +28,7 @@ from ..utils import (
 	depot_access_configured,
 	get_username,
 	host_group_access_configured,
+	is_configserver_terminal_forbidden,
 	is_opsiserver_write_permitted,
 	product_group_access_configured,
 	read_only_user,
@@ -103,6 +104,7 @@ def user_configuration() -> JSONResponse:
 				"configuration": {
 					"read_only": read_only_user(username),
 					"server_write_access": is_opsiserver_write_permitted(username),
+					"terminal_forbidden": is_configserver_terminal_forbidden(username),
 					"depot_access": depot_access_configured(username),
 					"host_group_access": host_group_access_configured(username),
 					"product_group_access": product_group_access_configured(username),
@@ -120,6 +122,7 @@ def user_configuration() -> JSONResponse:
 			"configuration": {
 				"read_only": read_only_user(username),
 				"server_write_access": True,
+				"terminal_forbidden": False,
 				"depot_access": False,
 				"host_group_access": False,
 				"product_group_access": False,

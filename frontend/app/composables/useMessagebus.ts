@@ -48,6 +48,7 @@ const ALL_DATA_EVENTS = [...SERVER_EVENTS, ...PRODUCT_EVENTS, ...LOG_EVENTS]
 // Core MessageBus composable
 export function useMessageBus(onMessage?: MessageHandler, channels: string[] = []) {
   const store = useMessageBusStore()
+  const { isTerminalEnabled } = useUserPermissions()
 
   if (onMessage) {
     const { lastMsg: storeLastMsg } = storeToRefs(store)
@@ -73,6 +74,7 @@ export function useMessageBus(onMessage?: MessageHandler, channels: string[] = [
   }
 
   async function wsTerminalOpen(suid: string, terminal: Terminal) {
+    if (!isTerminalEnabled.value) return
     terminal.terminalId = suid || createUUID()
     terminal.terminalChannel = 'service:config:terminal'
     terminal.terminalSessionChannel = 'session:' + suid
@@ -95,7 +97,7 @@ export function useMessageBus(onMessage?: MessageHandler, channels: string[] = [
   }
 
   function wsTerminalSend(msg: string, terminal: Terminal) {
-    if (!store.isConnected) return
+    if (!isTerminalEnabled.value || !store.isConnected) return
     const m = createMsgTemplate()
     m.type = 'terminal_data_write'
     m.channel = terminal.terminalChannel
@@ -107,7 +109,7 @@ export function useMessageBus(onMessage?: MessageHandler, channels: string[] = [
   }
 
   function wsTerminalResize(rows: number, cols: number, terminal: Terminal) {
-    if (!store.isConnected) return
+    if (!isTerminalEnabled.value || !store.isConnected) return
     const m = createMsgTemplate()
     m.type = 'terminal_resize_request'
     m.channel = terminal.terminalChannel

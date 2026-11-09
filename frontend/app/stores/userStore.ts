@@ -32,6 +32,7 @@ export const useUserStore = defineStore('user', {
     globalError: undefined as string | undefined,
     readOnly: false,
     serverWriteAccess: true,
+    terminalForbidden: false,
     depotAccessRestricted: false,
     hostGroupAccessRestricted: false,
     productGroupAccessRestricted: false,
@@ -78,6 +79,7 @@ export const useUserStore = defineStore('user', {
     setUserConfiguration(cfg: {
       read_only?: boolean
       server_write_access?: boolean
+      terminal_forbidden?: boolean
       depot_access?: boolean
       host_group_access?: boolean
       product_group_access?: boolean
@@ -86,6 +88,7 @@ export const useUserStore = defineStore('user', {
     }) {
       this.readOnly = cfg.read_only ?? false
       this.serverWriteAccess = cfg.server_write_access ?? true
+      this.terminalForbidden = cfg.terminal_forbidden ?? false
       this.depotAccessRestricted = cfg.depot_access ?? false
       this.hostGroupAccessRestricted = cfg.host_group_access ?? false
       this.productGroupAccessRestricted = cfg.product_group_access ?? false

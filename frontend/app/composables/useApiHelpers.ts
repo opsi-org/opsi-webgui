@@ -215,6 +215,7 @@ export function useApiHelpers() {
       configuration: {
         read_only: boolean
         server_write_access: boolean
+        terminal_forbidden: boolean
         depot_access: boolean
         host_group_access: boolean
         product_group_access: boolean

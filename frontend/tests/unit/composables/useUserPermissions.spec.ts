@@ -23,6 +23,7 @@ const mockUserStore = {
   readOnly: false,
   clientCreation: true,
   serverWriteAccess: true,
+  terminalForbidden: false,
   depotAccessRestricted: false,
   hostGroupAccessRestricted: false,
   productGroupAccessRestricted: false,
@@ -39,6 +40,7 @@ describe('useUserPermissions', () => {
     mockUserStore.readOnly = false
     mockUserStore.clientCreation = true
     mockUserStore.serverWriteAccess = true
+    mockUserStore.terminalForbidden = false
     mockUserStore.depotAccessRestricted = false
     mockUserStore.hostGroupAccessRestricted = false
     mockUserStore.productGroupAccessRestricted = false
@@ -76,6 +78,24 @@ describe('useUserPermissions', () => {
       mockUserStore.readOnly = true
       const { isPageAccessible } = await getPermissions()
       expect(isPageAccessible('/admin/terminal')).toBe(false)
+    })
+
+    it('blocks terminal navigation and direct access when the user role forbids it', async () => {
+      mockUserStore.terminalForbidden = true
+      const { isPageAccessible, isTerminalEnabled, filterNavItems } = await getPermissions()
+      expect(isPageAccessible('/admin/terminal')).toBe(false)
+      expect(isTerminalEnabled.value).toBe(false)
+      expect(filterNavItems([{ route: '/admin/terminal' }, { route: '/clients' }])).toEqual([
+        { route: '/admin/terminal' },
+        { route: '/clients' },
+      ])
+    })
+
+    it('does not use server-write permission to restrict terminal access', async () => {
+      mockUserStore.serverWriteAccess = false
+      const { isPageAccessible, isTerminalEnabled } = await getPermissions()
+      expect(isPageAccessible('/admin/terminal')).toBe(true)
+      expect(isTerminalEnabled.value).toBe(true)
     })
 
     it('returns false for terminal when terminal feature disabled', async () => {
@@ -118,6 +138,15 @@ describe('useUserPermissions', () => {
   })
 
   describe('filterNavItems', () => {
+    it('keeps the role-restricted terminal submenu visible without making it accessible', async () => {
+      mockUserStore.terminalForbidden = true
+      const { filterNavItems, isPageAccessible } = await getPermissions()
+      const items = [{ route: '/admin', submenu: [{ route: '/admin/terminal' }] }]
+
+      expect(filterNavItems(items)).toEqual(items)
+      expect(isPageAccessible('/admin/terminal')).toBe(false)
+    })
+
     it('filters out inaccessible nav items', async () => {
       mockUserStore.readOnly = true
       mockUserStore.disabledFeatures = ['terminal', 'messagebus_terminal']
@@ -169,6 +198,13 @@ describe('useUserPermissions', () => {
   })
 
   describe('computed permissions', () => {
+    it.each([false, true])('exposes server-write permission %s without blocking read access', async (allowed) => {
+      mockUserStore.serverWriteAccess = allowed
+      const { hasServerWriteAccess, isPageAccessible } = await getPermissions()
+      expect(hasServerWriteAccess.value).toBe(allowed)
+      expect(isPageAccessible('/servers')).toBe(true)
+    })
+
     it('canCreateClients reflects userStore.clientCreation', async () => {
       mockUserStore.clientCreation = true
       const { canCreateClients } = await getPermissions()

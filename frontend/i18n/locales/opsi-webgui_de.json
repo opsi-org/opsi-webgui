@@ -476,13 +476,13 @@
         "label": "Nur-Lesen-Modus"
       },
       "serverWrite": {
-        "disabled": "user.{username}.privilege.host.opsiserver.write = false → Server-Konfig, Depot-Einstellungen & Wartungsoperationen blockiert",
+        "disabled": "user.{username}.privilege.host.opsiserver.write = false → Server-Konfiguration und Depot-Einstellungen nur lesbar",
         "enabled": "user.{username}.privilege.host.opsiserver.write = true → Server-Konfiguration bearbeitbar",
         "label": "Server-Konfig-Schreiben"
       },
       "terminal": {
-        "disabled": "opsiconfd disabled-features: messagebus_terminal → Terminal-Seite ist deaktiviert",
-        "enabled": "opsiconfd disabled-features: messagebus_terminal ist NICHT gelistet → Terminal-Seite unter /admin/terminal zugänglich",
+        "disabled": "Terminal gesperrt: ConfigServer in user.{username}.connect.terminal.forbidden, Nur-Lese-Modus oder terminal/messagebus_terminal deaktiviert",
+        "enabled": "ConfigServer-Terminal erlaubt: keine Rollensperre, kein Nur-Lese-Modus und Terminal-Features aktiviert",
         "label": "Server-Terminal"
       }
     }

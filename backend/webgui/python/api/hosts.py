@@ -54,6 +54,7 @@ from ..utils import (
 	get_username,
 	host_group_access_configured,
 	mysql,
+	opsi_server_write_check,
 	parse_client_list,
 	parse_depot_list,
 	parse_hosts_list,
@@ -1190,6 +1191,7 @@ def get_server_data(
 @api_router.put("/api/opsidata/servers/{server_id}")
 @rest_api
 @read_only_check
+@opsi_server_write_check
 def update_server(request: Request, server_id: str, server: Server) -> RESTResponse:  # pylint: disable=too-many-locals
 	"""
 	Update OPSI-Server (Config and Depot).
