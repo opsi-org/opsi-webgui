@@ -265,6 +265,15 @@ def is_opsiserver_write_permitted(user: str) -> bool:
 	return _get_bool_config_value(f"user.{{{user}}}.privilege.host.opsiserver.write", default=True)
 
 
+def is_configserver_terminal_forbidden(user: str) -> bool:
+	with mysql.session() as session:
+		query = (
+			select(text("cv.value")).select_from(text("CONFIG_VALUE AS cv")).where(text("cv.configId = :config_id AND cv.isDefault = 1"))
+		)
+		rows = session.execute(query, {"config_id": f"user.{{{user}}}.connect.terminal.forbidden"}).fetchall()
+	return any(dict(row)["value"] == "ConfigServer" for row in rows)
+
+
 def client_creation_allowed(user: str) -> bool:
 	# Default True: users may create clients unless explicitly forbidden.
 	return _get_bool_config_value(f"user.{{{user}}}.privilege.host.createclient", default=True)
@@ -526,17 +535,20 @@ def read_only_check(func: Callable) -> Callable:
 	return check_user
 
 
+def check_opsiserver_write_permission(username: str) -> None:
+	if user_register() and not is_opsiserver_write_permitted(username):
+		logger.error("User %s has no server write access.", username)
+		raise OpsiApiException(
+			message=f"User {username} has no write access.",
+			http_status=status.HTTP_403_FORBIDDEN,
+		)
+
+
 def opsi_server_write_check(func: Callable) -> Callable:
 	@wraps(func)
 	def check_user(*args, **kwargs):  # type: ignore[no-untyped-def]
-		if user_register():
-			username = kwargs.get("request").scope.get("session").username
-			if not is_opsiserver_write_permitted(username):
-				logger.error("User %s is has no write access.", username)
-				raise OpsiApiException(
-					message=f"User {username} has no write access.",
-					http_status=status.HTTP_403_FORBIDDEN,
-				)
+		username = kwargs.get("request").scope.get("session").username
+		check_opsiserver_write_permission(username)
 		return func(*args, **kwargs)
 
 	return check_user

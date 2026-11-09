@@ -106,11 +106,10 @@
   import { useUiStore } from '~/stores/uiStore'
   const icons = useIcons()
   const { t: $t } = useI18n()
-  const { isReadOnly, isTerminalEnabled } = useUserPermissions()
+  const { isTerminalEnabled } = useUserPermissions()
   const { fetchDisabledFeatures } = useCachedData()
 
   const terminalContainer = ref<HTMLElement | null>(null)
-  const isDisabled = ref(false)
   const isConnecting = ref(false)
   const isConnected = ref(false)
   const showSettings = ref(false)
@@ -122,6 +121,7 @@
   const terminalIdDefault = crypto.randomUUID()
   const terminalChannelDefault = 'service:config:terminal'
   const terminalId = ref(terminalIdDefault)
+  const isDisabled = computed(() => !isTerminalEnabled.value || terminalId.value.length === 0)
   const terminalChannel = ref(terminalChannelDefault)
   const terminalSessionChannel = ref('')
   const terminalOutputProcessed = ref(false)
@@ -158,15 +158,6 @@
     return t as ReturnType<typeof createTerminalInterface>
   }
 
-  async function checkDisabled() {
-    if (isReadOnly.value || !isTerminalEnabled.value || terminalId.value.length === 0) {
-      isDisabled.value = true
-      return
-    }
-    const data = await fetchDisabledFeatures()
-    if (data) isDisabled.value = data.includes('terminal')
-  }
-
   function handleMessage(msg: unknown) {
     if (!msg || typeof msg !== 'object') return
     const message = msg as {
@@ -182,7 +173,7 @@
     }
 
     if (message.type === 'channel_subscription_event') {
-      if (!isConnecting.value) return
+      if (isDisabled.value || !isConnecting.value) return
       if (message.error) {
         disconnect()
         return
@@ -352,7 +343,7 @@
   }
 
   async function connect() {
-    if (!terminalInstance.value || isConnecting.value || isConnected.value) return
+    if (isDisabled.value || !terminalInstance.value || isConnecting.value || isConnected.value) return
 
     isConnecting.value = true
     terminalOutputProcessed.value = false
@@ -399,6 +390,7 @@
   }
 
   async function runSavedCommand(command: string) {
+    if (isDisabled.value) return
     if (isConnected.value && terminalInstance.value && terminalOutputProcessed.value) {
       messageBus.wsTerminalSend(`${command}\r`, terminalInstance.value.terminal)
       return
@@ -433,7 +425,6 @@
   }
 
   watch(terminalId, async (newId) => {
-    await checkDisabled()
     if (!isDisabled.value) {
       await nextTick()
       if (terminalInstance.value) {
@@ -445,7 +436,7 @@
   })
 
   onMounted(async () => {
-    await checkDisabled()
+    await fetchDisabledFeatures()
     if (!isDisabled.value) {
       await nextTick()
       await initTerminal()

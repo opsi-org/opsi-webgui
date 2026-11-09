@@ -19,12 +19,13 @@
  */
 import { test, expect } from '../../fixtures'
 import { runUITest } from '../../runner/runUITest'
-import { ensureQuickPanelOpen, seedClientSelection } from '../../utils/ui'
+import { applyLocaleCookie, ensureQuickPanelOpen, seedClientSelection } from '../../utils/ui'
 import type { Page } from '@playwright/test'
 
 interface UserConfigurationOverrides {
   read_only?: boolean
   server_write_access?: boolean
+  terminal_forbidden?: boolean
   depot_access?: boolean
   host_group_access?: boolean
   product_group_access?: boolean
@@ -42,6 +43,7 @@ async function mockUserConfiguration(page: Page, overrides: UserConfigurationOve
         configuration: {
           read_only: false,
           server_write_access: true,
+          terminal_forbidden: false,
           depot_access: false,
           host_group_access: false,
           product_group_access: false,
@@ -66,6 +68,44 @@ async function mockDisabledFeatures(page: Page, features: string[] = []): Promis
 }
 
 test.describe('User permissions', () => {
+  for (const collapsed of [false, true]) {
+    test(`terminal role keeps navigation disabled with ${collapsed ? 'collapsed' : 'expanded'} sidebar`, async ({ page }) => {
+      await mockUserConfiguration(page, { terminal_forbidden: true })
+      await mockDisabledFeatures(page)
+      await page.addInitScript((menuCollapsed) => {
+        localStorage.setItem('opsi-webgui-ui', JSON.stringify({ menuCollapsed, quickpanelOpened: false }))
+      }, collapsed)
+      await page.goto('/clients/', { waitUntil: 'domcontentloaded' })
+
+      if (collapsed) {
+        await page.locator('aside a[title][href*="/admin/"]').hover()
+      } else {
+        await page.locator('aside').getByRole('button', { name: /admin/i }).click()
+      }
+
+      const terminal = page.getByTestId('nav-admin-terminal')
+      await expect(terminal).toBeVisible()
+      await expect(terminal).toBeDisabled()
+      await expect(terminal).not.toHaveAttribute('href')
+      await terminal.scrollIntoViewIfNeeded()
+      await page.keyboard.press('Tab')
+      await page.getByTestId('nav-admin-diagnostics').focus()
+      await page.keyboard.press('Shift+Tab')
+      await expect(terminal).toBeFocused()
+      await expect(page.locator('[data-testid="nav-admin-terminal"]:focus-visible')).toBeVisible()
+      await expect(page.getByRole('tooltip')).toContainText(/permission|zugriff|accès/i)
+      await terminal.press('Enter')
+      await terminal.press('Space')
+      expect(new URL(page.url()).pathname).toMatch(/\/clients\/?$/)
+      await terminal.dispatchEvent('click')
+      expect(new URL(page.url()).pathname).toMatch(/\/clients\/?$/)
+
+      await page.goto('/admin/terminal', { waitUntil: 'domcontentloaded' })
+      await expect(page).toHaveURL(/\/clients\/?$/)
+      await expect(page.getByRole('button', { name: /^(connect|verbinden|connecter)$/i })).toHaveCount(0)
+    })
+  }
+
   for (const restriction of ['read_only', 'client_creation'] as const) {
     test(`clients clone panel denies writes with ${restriction} restriction`, async ({ page }) => {
       const [clientId] = await seedClientSelection(page)
@@ -76,7 +116,7 @@ test.describe('User permissions', () => {
         writes.push(route.request().url())
         await route.fulfill({ status: 403, json: { message: 'Permission denied' } })
       })
-      await page.goto(`/clients?client=${encodeURIComponent(clientId)}&view=panel&panelType=clone`, { waitUntil: 'networkidle' })
+      await page.goto(`/clients?client=${encodeURIComponent(clientId)}&view=panel&panelType=clone`, { waitUntil: 'domcontentloaded' })
       const panel = page.getByTestId('detail-panel')
       await expect(panel).toContainText(clientId)
       await expect(panel).toContainText(/permission denied|zugriff verweigert|accès refusé/i)
@@ -112,19 +152,19 @@ test.describe('User permissions', () => {
     await mockUserConfiguration(page, { read_only: true, client_creation: false })
 
     // Login via an accessible page first so the mocked configuration is loaded.
-    await page.goto('/clients')
-    await page.waitForTimeout(2000)
+    await page.goto('/clients', { waitUntil: 'domcontentloaded' })
+    await expect(page.getByText(/Nur-Lese-Modus|Read-only mode/).first()).toBeVisible({ timeout: 15000 })
 
     // /admin/maintenance is blocked for read-only users -> redirected to /clients.
     // A full SPA boot (init plugin + config fetch) can take a while in dev mode,
     // so wait for the redirect instead of asserting immediately.
-    await page.goto('/admin/maintenance')
+    await page.goto('/admin/maintenance', { waitUntil: 'domcontentloaded' })
     await page.waitForURL((url) => !url.pathname.includes('/admin/maintenance'), {
       timeout: 30000,
     })
     expect(page.url()).not.toContain('/admin/maintenance')
 
-    await page.goto('/clients?view=panel&panelType=add', { waitUntil: 'networkidle' })
+    await page.goto('/clients?view=panel&panelType=add', { waitUntil: 'domcontentloaded' })
     const panel = page.getByTestId('detail-panel')
     await expect(panel).toBeVisible()
     await expect(panel.getByRole('textbox')).toHaveCount(0)
@@ -133,7 +173,7 @@ test.describe('User permissions', () => {
 
   test('client creation disabled blocks the add panel form', async ({ page }) => {
     await mockUserConfiguration(page, { client_creation: false })
-    await page.goto('/clients?view=panel&panelType=add', { waitUntil: 'networkidle' })
+    await page.goto('/clients?view=panel&panelType=add', { waitUntil: 'domcontentloaded' })
     const panel = page.getByTestId('detail-panel')
     await expect(panel).toBeVisible()
     await expect(panel.getByRole('textbox')).toHaveCount(0)
@@ -172,21 +212,111 @@ test.describe('User permissions', () => {
     })
   })
 
-  test('user without server write access has read-only server configuration', async ({ page }) => {
-    await mockUserConfiguration(page, { server_write_access: false, read_only: false })
+  for (const { target, serverWrite, readOnly } of [
+    { target: 'global', serverWrite: false, readOnly: false },
+    { target: 'server', serverWrite: false, readOnly: false },
+    { target: 'depot', serverWrite: false, readOnly: false },
+    { target: 'global', serverWrite: true, readOnly: false },
+    { target: 'global', serverWrite: true, readOnly: true },
+    { target: 'client', serverWrite: false, readOnly: false },
+    { target: 'client', serverWrite: true, readOnly: true },
+  ]) {
+    test(`configuration inputs for ${target} with server-write=${serverWrite} and read-only=${readOnly}`, async ({ page }) => {
+      await mockUserConfiguration(page, { server_write_access: serverWrite, read_only: readOnly })
+      await applyLocaleCookie(page, 'en')
+      const readonly = readOnly || (target !== 'client' && !serverWrite)
+      const global = target === 'global'
+      const hostId = 'permission-test.opsi.test'
+      if (target === 'client') {
+        await page.route(
+          (url) => url.pathname.endsWith('/opsidata/clients'),
+          async (route) => {
+            await route.fulfill({
+              json: [
+                { clientId: hostId, description: '', macAddress: '', ipAddress: '', lastSeen: '', depotId: '', notes: '', uefi: false },
+              ],
+            })
+          },
+        )
+      } else if (!global) {
+        await page.route(
+          (url) => url.pathname.endsWith('/opsidata/depots'),
+          async (route) => {
+            await route.fulfill({
+              json: [{ depotId: hostId, type: target === 'depot' ? 'OpsiDepotserver' : 'OpsiConfigserver', description: '' }],
+            })
+          },
+        )
+      }
 
-    await runUITest(page, {
-      name: 'permissions-no-server-write',
-      route: '/servers',
-      waitAfterNav: 2500,
-      skipVisualRegression: true,
-      functional: async (p) => {
-        // The servers table must still render (viewing is allowed)
-        const table = p.locator('main table tbody tr').first()
-        await table.waitFor({ state: 'visible', timeout: 30000 })
-      },
+      const prefix = global ? 'user.{restricteduser}' : 'clientconfig.permission-test'
+      const ids = {
+        bool: `${prefix}.${global ? 'privilege.host.opsiserver.write' : 'enabled'}`,
+        text: `${prefix}.${global ? 'role' : 'label'}`,
+        list: `${prefix}.${global ? 'connect.terminal.forbidden' : 'values'}`,
+      }
+      const configs = [
+        { configId: ids.bool, type: 'BoolConfig', value: false, possibleValues: [false, true], multiValue: false, editable: false },
+        { configId: ids.text, type: 'UnicodeConfig', value: 'operator', possibleValues: [], multiValue: false, editable: true },
+        {
+          configId: ids.list,
+          type: 'UnicodeConfig',
+          value: ['ConfigServer'],
+          possibleValues: ['Clients', 'ConfigServer'],
+          multiValue: true,
+          editable: false,
+        },
+      ].map((config) => ({ ...config, objects: { [hostId]: config.value } }))
+      await page.route(
+        (url) => url.pathname.endsWith('/opsidata/config') || url.pathname.includes('/opsidata/config/objects/'),
+        async (route) => {
+          await route.fulfill({ json: { [global ? 'user' : 'clientconfig']: configs } })
+        },
+      )
+      const writes: string[] = []
+      await page.route('**/opsidata/config/values**', async (route) => {
+        writes.push(route.request().url())
+        await route.fulfill({ status: 403, json: { message: 'Permission denied' } })
+      })
+
+      const hostQuery = global ? '' : `&${target === 'client' ? 'client' : 'server'}=${encodeURIComponent(hostId)}`
+      await page.goto(`/${target === 'client' ? 'clients' : 'servers'}?view=panel&panelType=config&configType=parameters${hostQuery}`, {
+        waitUntil: 'domcontentloaded',
+      })
+      const panel = page.getByTestId('detail-panel')
+      await expect(panel.locator('.params-tree').first()).toBeVisible()
+      await panel.locator('input').first().fill(prefix)
+      if (global) await panel.getByRole('button', { name: /^connect\b/ }).click()
+      const row = (id: string) =>
+        panel
+          .locator('.param-tree-node')
+          .filter({ has: page.locator(`span[title="${id}"]`) })
+          .last()
+      const text = row(ids.text).getByRole('textbox')
+      const checkbox = row(ids.bool).getByRole('checkbox')
+      const list = row(ids.list).getByRole('button', { name: 'Value', exact: true })
+      const unsaved = panel.getByRole('button', { name: /unsaved changes/i })
+      await expect(text).toHaveValue('operator')
+      await expect(checkbox).not.toBeChecked()
+      await expect(list).toContainText('ConfigServer')
+
+      if (readonly) {
+        await expect(text).toBeDisabled()
+        await expect(checkbox).toBeDisabled()
+        await expect(list).toBeDisabled()
+        await page.keyboard.press('Control+Enter')
+        await expect(unsaved).toHaveCount(0)
+      } else {
+        await expect(text).toBeEnabled()
+        await expect(checkbox).toBeEnabled()
+        await expect(list).toBeEnabled()
+        await text.fill('updated operator')
+        await checkbox.check()
+        await expect(unsaved).toBeVisible()
+      }
+      expect(writes).toHaveLength(0)
     })
-  })
+  }
 
   test('dashboard shows permission restrictions for restricted users (visual regression)', async ({ page }) => {
     await mockUserConfiguration(page, {

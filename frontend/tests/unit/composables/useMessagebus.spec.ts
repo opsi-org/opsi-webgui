@@ -18,7 +18,7 @@
  * "changes detected" alert never triggered for real messagebus events.
  */
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
-import { reactive, toRef, nextTick } from 'vue'
+import { reactive, ref, toRef, nextTick } from 'vue'
 
 vi.mock('vue', async () => {
   const actual = await vi.importActual<typeof import('vue')>('vue')
@@ -33,7 +33,7 @@ const mockStore = reactive({
   lastMsg: undefined as unknown,
   autoRefresh: true,
   isConnected: true,
-  bus: undefined,
+  bus: undefined as { readyState: number; send: ReturnType<typeof vi.fn> } | undefined,
   connect: vi.fn(() => Promise.resolve({} as WebSocket)),
   disconnect: vi.fn(),
   send: vi.fn(() => Promise.resolve()),
@@ -55,11 +55,59 @@ vi.mock('pinia', () => ({
   }),
 }))
 
+const terminalEnabled = ref(true)
+
+beforeEach(() => {
+  terminalEnabled.value = true
+  vi.stubGlobal('useUserPermissions', () => ({ isTerminalEnabled: terminalEnabled }))
+})
+
 async function emitMessage(msg: unknown) {
   mockStore.lastMsg = msg
   await nextTick()
   await Promise.resolve()
 }
+
+describe('useMessageBus terminal permission', () => {
+  beforeEach(() => {
+    vi.clearAllMocks()
+    vi.stubGlobal('WebSocket', { OPEN: 1 })
+    mockStore.isConnected = true
+    mockStore.bus = { readyState: 1, send: vi.fn() }
+  })
+
+  it.each([false, true])('sends terminal requests only when access is %s', async (enabled) => {
+    terminalEnabled.value = enabled
+    const { useMessageBus } = await import('~/app/composables/useMessagebus')
+    const messagebus = useMessageBus()
+    const terminal = { terminalId: '', terminalChannel: '', terminalSessionChannel: '', cols: 80, rows: 24 }
+
+    await messagebus.wsTerminalOpen('terminal-id', terminal)
+    messagebus.wsTerminalSend('hostname\r', terminal)
+    messagebus.wsTerminalResize(30, 100, terminal)
+
+    expect(mockStore.send).toHaveBeenCalledTimes(enabled ? 2 : 0)
+    expect(mockStore.bus?.send).toHaveBeenCalledTimes(enabled ? 1 : 0)
+    if (enabled) {
+      expect(mockStore.send).toHaveBeenCalledWith(
+        expect.objectContaining({ type: 'terminal_open_request', channel: 'service:config:terminal' }),
+      )
+    }
+  })
+
+  it('still permits closing a terminal after access is denied', async () => {
+    terminalEnabled.value = false
+    const { useMessageBus } = await import('~/app/composables/useMessagebus')
+    useMessageBus().wsTerminalClose({
+      terminalId: 'terminal-id',
+      terminalChannel: 'service:config:terminal',
+      terminalSessionChannel: 'session:terminal-id',
+      cols: 80,
+      rows: 24,
+    })
+    expect(mockStore.send).toHaveBeenCalledWith(expect.objectContaining({ type: 'terminal_close_request' }))
+  })
+})
 
 describe('useAutoRefresh', () => {
   beforeEach(() => {

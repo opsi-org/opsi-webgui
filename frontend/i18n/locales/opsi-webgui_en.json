@@ -476,13 +476,13 @@
         "label": "Read-Only Mode"
       },
       "serverWrite": {
-        "disabled": "user.{username}.privilege.host.opsiserver.write = false → Server config, depot settings & maintenance blocked",
+        "disabled": "user.{username}.privilege.host.opsiserver.write = false → Server configuration and depot settings are read-only",
         "enabled": "user.{username}.privilege.host.opsiserver.write = true → Server configuration editable",
         "label": "Server Config Write"
       },
       "terminal": {
-        "disabled": "opsiconfd disabled-features: messagebus_terminal → Terminal page is disabled",
-        "enabled": "opsiconfd disabled-features: messagebus_terminal is NOT listed → Terminal page accessible at /admin/terminal",
+        "disabled": "Terminal blocked: ConfigServer in user.{username}.connect.terminal.forbidden, read-only mode, or terminal/messagebus_terminal disabled",
+        "enabled": "ConfigServer terminal allowed: no role prohibition, no read-only mode, and terminal features enabled",
         "label": "Server Terminal"
       }
     }

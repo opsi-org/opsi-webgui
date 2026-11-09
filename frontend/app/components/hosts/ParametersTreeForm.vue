@@ -101,7 +101,7 @@
                 :possible-values="param.possibleValues || []"
                 :multi-value="param.multiValue"
                 :editable="param.editable"
-                :disabled="false"
+                :disabled="readonly"
                 :config-id="param.configId"
                 :password="isPasswordParam(param.configId)"
                 @update:model-value="(v: unknown) => setParam(param, v)"

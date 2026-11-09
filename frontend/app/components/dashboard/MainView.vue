@@ -333,6 +333,7 @@
   const icons = useIcons()
   const { t: $t } = useI18n()
   const userStore = useUserStore()
+  const { isTerminalEnabled } = useUserPermissions()
   const router = useRouter()
   const { getDepotClientCounts, getClientIds } = useApiHelpers()
 
@@ -360,7 +361,7 @@
   const healthCounts = sharedHealthCounts
 
   const webguiFeatures = computed(() => {
-    const terminalDisabled = userStore.disabledFeatures.includes('messagebus_terminal') || userStore.disabledFeatures.includes('terminal')
+    const terminalDisabled = !isTerminalEnabled.value
     return [
       {
         key: 'readOnly',

@@ -34,10 +34,12 @@ from ..utils import (
 	backend,
 	bool_value,
 	check_batch_combination,
+	check_opsiserver_write_permission,
 	mysql,
 	opsi_server_write_check,
 	read_only_check,
 	unicode_config,
+	user_register,
 )
 
 api_router = APIRouter()
@@ -437,12 +439,11 @@ def save_config_value(  # pylint: disable=invalid-name, too-many-locals, too-man
 @api_router.post("/api/opsidata/config/values/objects")
 @rest_api
 @read_only_check
-# @opsi_server_write_check
 def save_config_state(  # pylint: disable=invalid-name, too-many-locals, too-many-statements, too-many-branches, unused-argument
 	request: Request, data: ConfigStates
 ) -> RESTResponse:
 	"""
-	Save config State for clients
+	Save configuration states for clients and servers.
 	"""
 	changes = []
 
@@ -476,6 +477,16 @@ def save_config_state(  # pylint: disable=invalid-name, too-many-locals, too-man
 
 	config_ids = list({row["configId"] for row in rows})
 	with mysql.session() as session:
+		if user_register():
+			# This endpoint also serves clients; only server targets require server-write permission.
+			server_query = (
+				select(text("hostId"))
+				.select_from(table("HOST"))
+				.where(text("hostId IN :object_ids AND type IN ('OpsiConfigserver', 'OpsiDepotserver')"))
+			)
+			if session.execute(server_query, {"object_ids": data.objectIds}).fetchone():
+				check_opsiserver_write_permission(request.scope["session"].username)
+
 		# One existing-pairs lookup instead of a per-(client, config) SELECT, so the
 		# correct messagebus event (created/updated) can still be sent per row.
 		existing_query = (

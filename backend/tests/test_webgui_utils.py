@@ -8,6 +8,7 @@
 
 """Unit tests for the OPSI-WebGUI backend utility decorators."""
 
+from json import loads
 from types import SimpleNamespace
 
 import pytest
@@ -371,3 +372,45 @@ class TestGetBoolConfigValueDefaults:
 		"""depot_access_configured must remain False by default (no restriction)."""
 		self._make_db([], monkeypatch)
 		assert utils.depot_access_configured("alice") is False
+
+	@pytest.mark.parametrize(
+		("values", "forbidden"),
+		[
+			([], False),
+			(["Clients", "Depots"], False),
+			(["ConfigServer"], True),
+			(["Clients", "ConfigServer"], True),
+			(["true"], False),
+		],
+	)
+	def test_configserver_terminal_prohibition_is_a_list(self, monkeypatch: pytest.MonkeyPatch, values: list[str], forbidden: bool) -> None:
+		self._make_db([{"value": value} for value in values], monkeypatch)
+		assert utils.is_configserver_terminal_forbidden("alice") is forbidden
+
+
+@pytest.mark.parametrize("registered", [False, True])
+def test_user_configuration_terminal_role(monkeypatch: pytest.MonkeyPatch, registered: bool) -> None:
+	from webgui.python import api
+
+	monkeypatch.setattr(api, "get_username", lambda: "alice")
+	monkeypatch.setattr(api, "user_register", lambda: registered)
+	monkeypatch.setattr(api.backend, "service_healthCheck", lambda **_kwargs: [])
+	monkeypatch.setattr(api, "read_only_user", lambda _user: False)
+	for name in (
+		"is_opsiserver_write_permitted",
+		"depot_access_configured",
+		"host_group_access_configured",
+		"product_group_access_configured",
+		"client_creation_allowed",
+	):
+		monkeypatch.setattr(api, name, lambda _user: True)
+
+	def terminal_forbidden(user: str) -> bool:
+		assert registered
+		assert user == "alice"
+		return True
+
+	monkeypatch.setattr(api, "is_configserver_terminal_forbidden", terminal_forbidden)
+	configuration = loads(api.user_configuration().body)["configuration"]
+	assert configuration["terminal_forbidden"] is registered
+	assert configuration["server_write_access"] is True

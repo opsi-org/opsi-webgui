@@ -37,20 +37,36 @@
                 <CoreAppIcon :name="expanded[item.route] ? icons.chevronUp : icons.chevronDown" class="w-4 h-4 transition-transform" />
               </CoreAppButton>
               <div v-if="expanded[item.route]" class="ml-3 mt-0.5 mb-1 border-l-2 border-white/20 pl-1">
-                <NuxtLink
+                <CoreAppTooltip
                   v-for="sub in item.submenu"
                   :key="sub.route"
-                  :to="sub.route"
-                  :data-testid="linkTestId(sub.route)"
-                  class="flex items-center gap-2 px-2 py-1 rounded-lg text-xs transition-colors duration-100"
-                  :class="
-                    isSubActive(sub, item.submenu)
-                      ? 'bg-(--ui-color-primary-200) text-(--color-opsi-deep-blue) font-medium'
-                      : 'text-white/80 hover:text-white hover:bg-white/15'
-                  "
+                  :text="t('auth.permissionDenied')"
+                  :disabled="isPageAccessible(sub.route)"
                 >
-                  {{ t(sub.title) }}
-                </NuxtLink>
+                  <NuxtLink
+                    v-if="isPageAccessible(sub.route)"
+                    :to="sub.route"
+                    :data-testid="linkTestId(sub.route)"
+                    class="flex items-center gap-2 px-2 py-1 rounded-lg text-xs transition-colors duration-100"
+                    :class="
+                      isSubActive(sub, item.submenu)
+                        ? 'bg-(--ui-color-primary-200) text-(--color-opsi-deep-blue) font-medium'
+                        : 'text-white/80 hover:text-white hover:bg-white/15'
+                    "
+                  >
+                    {{ t(sub.title) }}
+                  </NuxtLink>
+                  <span
+                    v-else
+                    role="link"
+                    aria-disabled="true"
+                    tabindex="0"
+                    :data-testid="linkTestId(sub.route)"
+                    class="flex items-center gap-2 px-2 py-1 rounded-lg text-xs text-white/50 cursor-not-allowed"
+                  >
+                    {{ t(sub.title) }}
+                  </span>
+                </CoreAppTooltip>
               </div>
             </template>
 
@@ -77,20 +93,37 @@
                   <div class="px-3 py-2 font-heading text-xs text-white/70 border-b border-white/10">
                     {{ t(item.title) }}
                   </div>
-                  <NuxtLink
+                  <CoreAppTooltip
                     v-for="sub in item.submenu"
                     :key="sub.route"
-                    :to="sub.route"
-                    @click="hoveredItem = null"
-                    class="flex items-center px-2 py-1 rounded-lg mx-1 my-0.5 text-xs transition-colors duration-100"
-                    :class="
-                      isSubActive(sub, item.submenu)
-                        ? 'bg-(--ui-color-primary-200) text-(--color-opsi-deep-blue) font-medium'
-                        : 'text-white/80 hover:text-white hover:bg-white/15'
-                    "
+                    :text="t('auth.permissionDenied')"
+                    :disabled="isPageAccessible(sub.route)"
                   >
-                    {{ t(sub.title) }}
-                  </NuxtLink>
+                    <NuxtLink
+                      v-if="isPageAccessible(sub.route)"
+                      :to="sub.route"
+                      :data-testid="linkTestId(sub.route)"
+                      @click="hoveredItem = null"
+                      class="flex items-center px-2 py-1 rounded-lg mx-1 my-0.5 text-xs transition-colors duration-100"
+                      :class="
+                        isSubActive(sub, item.submenu)
+                          ? 'bg-(--ui-color-primary-200) text-(--color-opsi-deep-blue) font-medium'
+                          : 'text-white/80 hover:text-white hover:bg-white/15'
+                      "
+                    >
+                      {{ t(sub.title) }}
+                    </NuxtLink>
+                    <span
+                      v-else
+                      role="link"
+                      aria-disabled="true"
+                      tabindex="0"
+                      :data-testid="linkTestId(sub.route)"
+                      class="flex items-center px-2 py-1 rounded-lg mx-1 my-0.5 text-xs text-white/50 cursor-not-allowed"
+                    >
+                      {{ t(sub.title) }}
+                    </span>
+                  </CoreAppTooltip>
                 </div>
               </Teleport>
             </template>
@@ -149,7 +182,7 @@
   const icons = useIcons()
   const { t: $t } = useI18n()
   const $route = useRoute()
-  const { filterNavItems } = useUserPermissions()
+  const { filterNavItems, isPageAccessible } = useUserPermissions()
 
   const expanded = ref<Record<string, boolean>>({})
   const hoveredItem = ref<string | null>(null)
