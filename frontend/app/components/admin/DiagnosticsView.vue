@@ -34,7 +34,12 @@
           @click="filterByStatus('ok')"
           intent="toggle"
           :active="activeTab === 'healthcheck' && statusFilter === 'ok'"
-          class="p-2.5! rounded-md text-center h-auto! flex-col!"
+          :class="[
+            'p-2.5! rounded-md border transition-all text-center cursor-pointer hover:shadow-sm h-auto! flex-col! bg-(--color-success-soft-bg)!',
+            activeTab === 'healthcheck' && statusFilter === 'ok'
+              ? 'ring-2 ring-offset-2 ring-offset-(--color-surface) ring-(--color-primary) border-(--color-primary)'
+              : 'border-(--color-border) hover:border-(--color-success)',
+          ]"
         >
           <div class="text-xl font-bold text-(--color-success-soft-text)">{{ stats.ok }}</div>
           <div class="text-[11px] text-(--color-text) mt-0.5">{{ $t('diag.passed') }}</div>
@@ -43,7 +48,12 @@
           @click="filterByStatus('warning')"
           intent="toggle"
           :active="activeTab === 'healthcheck' && statusFilter === 'warning'"
-          class="p-2.5! rounded-md text-center h-auto! flex-col!"
+          :class="[
+            'p-2.5! rounded-md border transition-all text-center cursor-pointer hover:shadow-sm h-auto! flex-col! bg-(--color-warning-soft-bg)!',
+            activeTab === 'healthcheck' && statusFilter === 'warning'
+              ? 'ring-2 ring-offset-2 ring-offset-(--color-surface) ring-(--color-primary) border-(--color-primary)'
+              : 'border-(--color-border) hover:border-(--color-warning)',
+          ]"
         >
           <div class="text-xl font-bold text-(--color-warning-soft-text)">{{ stats.warning }}</div>
           <div class="text-[11px] text-(--color-text) mt-0.5">{{ $t('common.warnings') }}</div>
@@ -52,7 +62,12 @@
           @click="filterByStatus('error')"
           intent="toggle"
           :active="activeTab === 'healthcheck' && statusFilter === 'error'"
-          class="p-2.5! rounded-md text-center h-auto! flex-col!"
+          :class="[
+            'p-2.5! rounded-md border transition-all text-center cursor-pointer hover:shadow-sm h-auto! flex-col! bg-(--color-error-soft-bg)!',
+            activeTab === 'healthcheck' && statusFilter === 'error'
+              ? 'ring-2 ring-offset-2 ring-offset-(--color-surface) ring-(--color-primary) border-(--color-primary)'
+              : 'border-(--color-border) hover:border-(--color-error)',
+          ]"
         >
           <div class="text-xl font-bold text-(--color-error-soft-text)">{{ stats.error }}</div>
           <div class="text-[11px] text-(--color-text) mt-0.5">{{ $t('common.errors') }}</div>
@@ -61,7 +76,12 @@
           @click="showModulesOverview"
           intent="toggle"
           :active="activeTab === 'modules' && !statusFilter"
-          class="p-2.5! rounded-md text-center h-auto! flex-col!"
+          :class="[
+            'p-2.5! rounded-md border transition-all text-center cursor-pointer hover:shadow-sm h-auto! flex-col! bg-(--color-primary-soft-bg)!',
+            activeTab === 'modules' && !statusFilter
+              ? 'ring-2 ring-offset-2 ring-offset-(--color-surface) ring-(--color-primary) border-(--color-primary)'
+              : 'border-(--color-border) hover:border-(--color-primary)',
+          ]"
         >
           <div class="text-xl font-bold text-(--color-primary-soft-text)">
             {{ modules.length }}
