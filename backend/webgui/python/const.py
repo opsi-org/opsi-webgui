@@ -10,7 +10,7 @@
 
 ADDON_ID = "webgui"
 ADDON_NAME = "OPSI-WebGUI"
-ADDON_VERSION = "4.3.48.15"
+ADDON_VERSION = "4.3.48.16"
 
 # Upper bounds for id lists accepted by batch/action endpoints to avoid resource exhaustion
 MAX_IDS_PER_REQUEST = 1000
