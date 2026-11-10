@@ -85,7 +85,7 @@
   const { getConfigServer, callLogin, getUserSettings } = useApiHelpers()
   const { fetchPostLoginData } = useCachedData()
 
-  const isDark = computed(() => colorMode.preference === 'dark')
+  const isDark = computed(() => colorMode.value === 'dark')
 
   const cred = reactive({ username: '', password: '' })
   const loading = ref(false)

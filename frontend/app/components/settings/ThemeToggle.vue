@@ -42,7 +42,7 @@
   const colorMode = useColorMode()
   const { t: $t } = useI18n()
 
-  const isDarkMode = computed(() => colorMode.preference === 'dark')
+  const isDarkMode = computed(() => colorMode.value === 'dark')
 
   function toggleTheme() {
     const newMode = isDarkMode.value ? 'light' : 'dark'

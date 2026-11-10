@@ -133,7 +133,7 @@ export default defineNuxtConfig({
   },
 
   colorMode: {
-    preference: 'light', // Default theme
+    preference: 'system', // Default theme
     fallback: 'light',
     storageKey: 'opsi-webgui-color-mode',
     classSuffix: '',
