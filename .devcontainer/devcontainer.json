@@ -6,6 +6,10 @@
   "postCreateCommand": ".devcontainer/post_create.sh",
   "postStartCommand": ".devcontainer/post_start.sh",
   "workspaceFolder": "/workspace",
+  "mounts": [
+    "source=/home/otto/Projekte/opsi-webgui/.git,target=/home/otto/Projekte/opsi-webgui/.git,type=bind"
+  ],
+
   "containerEnv": {
     "DEV_USER": "${localEnv:USER}",
     "DEV_UID": "${localEnv:UID}",
