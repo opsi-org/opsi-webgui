@@ -84,7 +84,7 @@
           <template v-if="!isSectionCollapsed(section.id)">
             <div
               v-for="item in visibleClientItems(section)"
-              :key="`${section.id}-${item.id}`"
+              :key="`${section.id}-${item.key}`"
               v-memo="[item.isExpanded, item.hasChildren, getItemSelectionState(item), item.memberCount, isBusyGroup(item.id)]"
               :style="{
                 paddingLeft: `${item.depth * 14 + 6}px`,
@@ -185,7 +185,7 @@
           <template v-if="productRootExpanded">
             <div
               v-for="item in visibleProductItems"
-              :key="item.id"
+              :key="item.key"
               v-memo="[item.isExpanded, item.hasChildren, getItemSelectionState(item), item.memberCount, isBusyGroup(item.id)]"
               :style="{
                 paddingLeft: `${item.depth * 14 + 6}px`,
@@ -272,7 +272,9 @@
     fetchProductGroups,
     fetchGroupChildrenLazy,
     fetchGroupMembersRecursive,
+    getCachedGroupMembersRecursive,
     fetchProductGroupMembersRecursive,
+    getCachedProductGroupMembersRecursive,
     toggleGroupExpand,
   } = useCachedData()
   const { isHostGroupAccessRestricted, isProductGroupAccessRestricted } = useUserPermissions()
@@ -353,6 +355,7 @@
   })
 
   interface FlatItem {
+    key: string
     id: string
     label: string
     depth: number
@@ -410,6 +413,7 @@
       if (!query && !isExpanded) {
         if (labelMatch) {
           result.push({
+            key: JSON.stringify([node.id]),
             id: node.id,
             label,
             depth,
@@ -431,6 +435,7 @@
         for (const member of members) {
           if (!memberMatchesQuery(member, childQuery)) continue
           memberItems.push({
+            key: JSON.stringify([node.id, member]),
             id: member,
             label: member,
             depth: memberDepth,
@@ -445,6 +450,7 @@
       const hasMatchingDescendants = childItems.length > 0 || memberItems.length > 0
       if (labelMatch || hasMatchingDescendants) {
         result.push({
+          key: JSON.stringify([node.id]),
           id: node.id,
           label,
           depth,
@@ -547,7 +553,11 @@
   function getItemSelectionState(item: FlatItem): ItemSelectionState {
     if (!item.isGroup) return selectedItemsSet.value.has(item.id) ? 'checked' : 'unchecked'
 
-    const members = collectLoadedGroupMembersRecursive(item.id)
+    const cachedMembers =
+      props.groupType === 'client'
+        ? getCachedGroupMembersRecursive(item.id, selectionStore.selectedServers)
+        : getCachedProductGroupMembersRecursive(item.id)
+    const members = cachedMembers ?? collectLoadedGroupMembersRecursive(item.id)
     if (members.length === 0) return 'unchecked'
 
     const selectedMemberCount = members.filter((member) => selectedItemsSet.value.has(member)).length
@@ -578,7 +588,6 @@
       selectionLoadingIds.value = nextLoading
       try {
         const members = await fetchAllGroupMembers(item.id)
-        hydrateNodeMembers(item.id, members)
         _doGroupSelection(item, members)
       } finally {
         const updatedLoading = new Set(selectionLoadingIds.value)
@@ -592,7 +601,7 @@
   }
 
   function _doGroupSelection(item: FlatItem, members: string[]) {
-    const isCurrentlyChecked = getItemSelectionState(item) === 'checked'
+    const isCurrentlyChecked = members.length > 0 && members.every((member) => selectedItemsSet.value.has(member))
     if (props.groupType === 'client') {
       if (isCurrentlyChecked) {
         // Uncheck: remove group and its members

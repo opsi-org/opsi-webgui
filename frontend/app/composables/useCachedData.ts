@@ -73,7 +73,7 @@ const clientGroupsState = reactive({
   loadingGroups: new Set<string>(),
 })
 let clientGroupsPromise: Promise<void> | null = null
-const clientGroupRecursiveMembersCache = new Map<string, string[]>()
+const clientGroupRecursiveMembersCache = reactive(new Map<string, string[]>())
 
 // Product groups cache
 const productGroupsState = reactive({
@@ -87,7 +87,7 @@ const productGroupsState = reactive({
   loadingGroups: new Set<string>(),
 })
 let productGroupsPromise: Promise<void> | null = null
-const productGroupRecursiveMembersCache = new Map<string, string[]>()
+const productGroupRecursiveMembersCache = reactive(new Map<string, string[]>())
 
 function getRecursiveMembersCacheKey(groupId: string, selectedServers: string[] = []) {
   return `${groupId}::${[...selectedServers].sort().join(',')}`
@@ -539,6 +539,14 @@ export function useCachedData() {
     }
   }
 
+  function getCachedGroupMembersRecursive(groupId: string, selectedServers: string[] = []): readonly string[] | undefined {
+    return readonly(clientGroupRecursiveMembersCache).get(getRecursiveMembersCacheKey(groupId, selectedServers))
+  }
+
+  function getCachedProductGroupMembersRecursive(groupId: string): readonly string[] | undefined {
+    return readonly(productGroupRecursiveMembersCache).get(groupId)
+  }
+
   async function fetchGroupMembersRecursive(groupId: string, selectedServers: string[] = []): Promise<string[]> {
     const cacheKey = getRecursiveMembersCacheKey(groupId, selectedServers)
     const cachedMembers = clientGroupRecursiveMembersCache.get(cacheKey)
@@ -655,6 +663,7 @@ export function useCachedData() {
     fetchClientGroups,
     fetchGroupChildrenLazy,
     fetchGroupMembersRecursive,
+    getCachedGroupMembersRecursive,
 
     // Product groups
     productGroupsTree: computed(() => productGroupsState.tree),
@@ -665,6 +674,7 @@ export function useCachedData() {
     fetchProductGroups,
     fetchProductGroupChildrenLazy,
     fetchProductGroupMembersRecursive,
+    getCachedProductGroupMembersRecursive,
 
     // Group tree actions
     toggleGroupExpand,
